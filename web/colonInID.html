@@ -1,0 +1,37 @@
+<html>
+<head> 
+        <script type="text/javascript" src="./jquery.js"></script>
+        <style>
+
+        </style>
+</head> 
+<body>
+        <input type="text" value="ddd" id="a:b">
+        <script>
+            console.log('---- \\x present x (x is printable character) ----');
+            console.log('slash + slash='+"\\"); // \ is part of transfer encoding syntax
+            console.log('slash + "='+"\""); // " is collision with string syntax double quotation, eg "xx" wrapped by "
+            
+            console.log('---- \\x present control character ----');
+            console.log('slash + n='+"\n"); // \n present line break
+
+            console.log('---- \\x equal x when x is not needed transfer concoding ----');
+            console.log('slash + 8='+"\8"); // \8 == 8
+            console.log('slash + o='+"\o"); // \o == o
+            console.log('slash + :='+"\:"); // \: == :
+
+
+            console.log('#a+slash+slash+:b='+"#a\\:b"); // #a\\:b == #a\:b
+            console.log('jquery length='+$("#a\\:b").length); // length == 1 with selector #a\\:b
+            console.log('jquery length='+$("[id^='a:b']").length); // length == 1 with selector [id^='a:b']
+
+
+            console.log("#a:b")
+            console.log("#a\:b")
+            console.log(document.querySelectorAll("#a\\:b").length)
+            console.log("[id^='a:b']")
+            console.log(document.querySelectorAll("[id^='a:b']").length)
+        </script>
+</body>
+</html>
+
