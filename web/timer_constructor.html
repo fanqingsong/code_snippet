@@ -1,0 +1,87 @@
+<html>
+    <head>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    </head>
+    <body>
+    <label>timer msg :</label> </br>
+    <textarea id="timer_msg" style="width:500px; height:300px"></textarea>
+    <script>
+    $.fn.extend({printMsg : function(msg){
+         var oldmsg = $(this).val();
+         var newmsg = oldmsg + "\n" + msg;
+         $(this).val(newmsg);
+    }});
+    
+    var __nativeST__ = window.setTimeout;
+    window.setTimeout = function (vCallback, nDelay /*, argumentToPass1, argumentToPass2, etc. */) {
+      var oThis = this, aArgs = Array.prototype.slice.call(arguments, 2);
+      return __nativeST__(vCallback instanceof Function ? function () {
+        vCallback.apply(oThis, aArgs);
+      } : vCallback, nDelay);
+    };
+    
+    function timer(fnAlarmIn, options)
+    {
+        /* external settable */
+        this.timeout = 1000;
+        this.fnAlarm = function(){
+            $("#timer_msg").printMsg(this.timerHandle.toString() 
+                + "-please add custom fnAlarm")
+        };
+        
+        /* inner maintain variable */
+        this.timerHandle;
+        this.timerObj;
+        
+        /* set external variable */
+        if ( fnAlarmIn )
+        {
+            this.fnAlarm = fnAlarmIn;
+        }
+
+        if ( options && options.timeout )
+        {
+            this.timeout = options.timeout;
+        }
+        
+        this.start = function(){
+            this.timerHandle = setTimeout.call(this, function(){
+                $("#timer_msg").printMsg(this.getTimerID() + "-->timer triggered");
+                this.fnAlarm.call(this);
+                delete this.timerHandle;
+            }, this.timeout);
+            $("#timer_msg").printMsg(this.timerHandle.toString() + "-timer started");
+        };
+        
+        this.stop = function(){
+            $("#timer_msg").printMsg(this.timerHandle.toString() + "-timer stoped");
+            clearTimeout(this.timerHandle)
+            delete this.timerHandle;
+        };
+        
+        this.getTimerID = function(){
+            return this.timerHandle;
+        };
+    }
+
+    var timer1 = new timer();
+    timer1.start();
+    timer1.stop();
+    
+    var timer2 = new timer(function(){
+        $("#timer_msg").printMsg("timer custom alarm");
+    }, {timeout:2000});
+    timer2.start();
+    
+    var timer3 = new timer(function(){
+        $("#timer_msg").printMsg(timer3.getTimerID()+"-timer custom alarm");
+    }, {timeout:3000});
+    timer3.start();
+    
+    var timer4 = new timer(function(){
+        $("#timer_msg").printMsg(this.getTimerID()+"-timer custom alarm");
+    }, {timeout:4000});
+    timer4.start();
+    </script>
+    </body>
+</html>

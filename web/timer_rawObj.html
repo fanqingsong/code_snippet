@@ -1,0 +1,30 @@
+<html>
+<head> 
+     <style>
+         
+     </style>
+</head> 
+<body>
+     
+     <script type='text/javascript'> 
+        var alarm = {
+          remind: function(aMessage) { alert(aMessage); delete this.timeoutID;
+          },
+
+          setup: function() {
+            this.cancel();
+            var self = this;
+            this.timeoutID = window.setTimeout(function(msg) {self.remind(msg);}, 1000, "Wake up!");
+          },
+
+          cancel: function() {
+            if(typeof this.timeoutID == "number") {
+              window.clearTimeout(this.timeoutID);
+              delete this.timeoutID;
+            }
+          }
+        };
+        window.onclick = function() { alarm.setup() };
+     </script>
+</body>
+</html>

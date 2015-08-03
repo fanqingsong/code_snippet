@@ -1,0 +1,72 @@
+<html>
+    <head>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    </head>
+    <body>
+    <label>timer msg :</label> </br>
+    <textarea id="timer_msg" style="width:500px; height:300px"></textarea>
+    <script>
+    $.fn.extend({printMsg : function(msg){
+         var oldmsg = $(this).val();
+         var newmsg = oldmsg + "\n" + msg;
+         $(this).val(newmsg);
+    }});
+    
+    function createTimer(fnAlarmIn, options)
+    {
+        /* external settable */
+        var timeout = 1000;
+        var fnAlarm = function(){
+            $("#timer_msg").printMsg(timerHandle.toString() 
+                + "-please add custom fnAlarm")
+        };
+        
+        /* inner maintain variable */
+        var timerHandle;
+        
+        /* set external variable */
+        if ( fnAlarmIn )
+        {
+            fnAlarm = fnAlarmIn;
+        }
+
+        if ( options && options.timeout )
+        {
+            timeout = options.timeout;
+        }
+        
+        return {
+            start: function(){
+                timerHandle = setTimeout(function(){
+                    fnAlarm();
+                    delete this.timerHandle;
+                },timeout);
+                $("#timer_msg").printMsg(timerHandle.toString() + "-timer started");
+            },
+            stop: function(){
+                clearTimeout(timerHandle)
+                delete this.timerHandle;
+                $("#timer_msg").printMsg(timerHandle.toString() + "-timer stoped");
+            },
+            getTimerID: function(){
+                return timerHandle;
+            }
+        };
+    }
+
+    var timer1 = createTimer();
+    timer1.start();
+    timer1.stop();
+    
+    var timer2 = createTimer(function(){
+        $("#timer_msg").printMsg("timer custom alarm");
+    }, {timeout:2000});
+    timer2.start();
+    
+    var timer3 = createTimer(function(){
+        $("#timer_msg").printMsg(timer3.getTimerID()+"-timer custom alarm");
+    }, {timeout:3000});
+    timer3.start();
+    </script>
+    </body>
+</html>
