@@ -1,0 +1,130 @@
+<html>
+    <head>
+        <script src="./jquery.js"></script>
+    </head>
+    <body>
+    <label>timer msg :</label> </br>
+    <textarea id="timer_msg" style="width:500px; height:300px"></textarea>
+    <script>
+    $.fn.extend({printMsg : function(msg){
+         var oldmsg = $(this).val();
+         var newmsg = oldmsg + "\n" + msg;
+         $(this).val(newmsg);
+    }});
+    
+    // var __nativeST__ = window.setTimeout;
+    // window.setTimeout = function (vCallback, nDelay /*, argumentToPass1, argumentToPass2, etc. */) {
+    //   var oThis = this, aArgs = Array.prototype.slice.call(arguments, 2);
+    //   return __nativeST__(vCallback instanceof Function ? function () {
+    //     vCallback.apply(oThis, aArgs);
+    //   } : vCallback, nDelay);
+    // };
+    
+    /* ------------------- bind interface Polyfill by MDN ------------------------ */
+    if (!Function.prototype.bind) {
+      Function.prototype.bind = function (oThis) {
+        if (typeof this !== "function") {
+          
+          // closest thing possible to the ECMAScript 5 internal IsCallable function
+          throw new TypeError("Function.prototype.bind - what is trying to be bound is not callable");
+        }
+     
+        var aArgs = Array.prototype.slice.call(arguments, 1), 
+            fToBind = this, 
+            fNOP = function () {},
+            fBound = function () {
+              return fToBind.apply(this instanceof fNOP &amp;&amp; oThis
+                                     ? this
+                                     : oThis,
+                                   aArgs.concat(Array.prototype.slice.call(arguments)));
+            };
+     
+        fNOP.prototype = this.prototype;
+        fBound.prototype = new fNOP();
+     
+        return fBound;
+      };
+    }
+
+    /*******************************************************************************
+    *  Author: fanqingsong
+    *  Date: 2015-8-4
+    *  Description: 定时器类
+    *  Changes:
+    *******************************************************************************/
+    var TimerClass = (function(){
+        /* 类的构造函数 */
+        function timer(fnAlarmIn, options)
+        {
+            /* external settable */
+            this.timeout = 1000;
+            this.fnAlarm = function(){
+                $("#timer_msg").printMsg(this.timerHandle.toString() 
+                    + "-please add custom fnAlarm")
+            };
+            
+            /* inner maintain variable */
+            this.timerHandle;
+            
+            /* set external variable */
+            if ( fnAlarmIn )
+            {
+                this.fnAlarm = fnAlarmIn;
+            }
+
+            if ( options && options.timeout )
+            {
+                this.timeout = options.timeout;
+            }
+        }
+
+        timer.prototype = {
+            start : function(){
+                this.timerHandle = setTimeout(function(){
+                    $("#timer_msg").printMsg(this.getTimerID() + "-->timer triggered");
+
+                    this.fnAlarm.call(this);
+
+                    delete this.timerHandle;
+                }.bind(this), this.timeout);
+
+                $("#timer_msg").printMsg(this.timerHandle.toString() + "-timer started");
+            },
+            stop : function(){
+                $("#timer_msg").printMsg(this.timerHandle.toString() + "-timer stoped");
+
+                clearTimeout(this.timerHandle);
+
+                delete this.timerHandle;
+            },
+            getTimerID : function(){
+                return this.timerHandle;
+            }
+        };
+
+        timer.prototype.constructor = timer;
+
+        return timer; 
+    })();
+    
+    var timer1 = new TimerClass();
+    timer1.start();
+    timer1.stop();
+    
+    var timer2 = new TimerClass(function(){
+        $("#timer_msg").printMsg("timer custom alarm");
+    }, {timeout:2000});
+    timer2.start();
+    
+    var timer3 = new TimerClass(function(){
+        $("#timer_msg").printMsg(timer3.getTimerID()+"-timer custom alarm");
+    }, {timeout:3000});
+    timer3.start();
+    
+    var timer4 = new TimerClass(function(){
+        $("#timer_msg").printMsg(this.getTimerID()+"-timer custom alarm");
+    }, {timeout:4000});
+    timer4.start();
+    </script>
+    </body>
+</html>
