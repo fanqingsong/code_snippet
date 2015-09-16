@@ -25,7 +25,7 @@ typedef enum boolType {
 
 // pattern modifier : {} * +
 typedef enum ModifierType{
-    MODIFIER_TYPE_PLAIN, // PLAIN CHAR
+    MODIFIER_TYPE_NOMODIFIER, // PLAIN CHAR
     MODIFIER_TYPE_FIXCOUNT, // {X}
     MODIFIER_TYPE_ZEROPLUS, // *
     MODIFIER_TYPE_ONEPLUS, // +
@@ -33,8 +33,9 @@ typedef enum ModifierType{
 } E_MODIFIER_TYPE;
 
 typedef struct patternChar{
-    char cChar;
-    E_MODIFIER_TYPE modifyType;
+    char szOptChars[128]; // option char , for muliti char from 0|2 and [23] express
+    int iOptCharsLen;
+    E_MODIFIER_TYPE modifyType; // modifier type : * + ?
     int modifyPara;
 } T_PAT_CHAR, *PT_PAT_CHAR;
 
@@ -53,37 +54,54 @@ typedef struct PatCharModifier{
     MatchStrByModifier matchStrByModifier;
 } T_PATCHAR_MODIFIER, PT_PATCHAR_MODIFIER;
 
+typedef E_BOOL_TYPE (*GetOptCharsFunc)(PT_PAT_CHAR ptPatChar, PT_STRING_OBJ ptPatObj);
 
 void MyPrintf(char* fmt, ...);
 char* DupSubStr(char* str, int start, int end);
 void StopWithMsg(char* msg);
 
+/* 修饰符获取 和 依照修饰符匹配函数簇 */
 E_BOOL_TYPE MatchFixCount(PT_STRING_OBJ ptPatObj, PT_PAT_CHAR ptPatChar);
-E_BOOL_TYPE MatchStrByFixCount(PT_PAT_CHAR ptPatChar, PT_STRING_OBJ ptStrObj);
+E_BOOL_TYPE DoMatchStrByFixCount(PT_PAT_CHAR ptPatChar, PT_STRING_OBJ ptStrObj);
 
 E_BOOL_TYPE MatchQuestionMark(PT_STRING_OBJ ptPatObj, PT_PAT_CHAR ptPatChar);
-E_BOOL_TYPE MatchStrByQuestionMark(PT_PAT_CHAR ptPatChar, PT_STRING_OBJ ptStrObj);
+E_BOOL_TYPE DoMatchStrByQuestionMark(PT_PAT_CHAR ptPatChar, PT_STRING_OBJ ptStrObj);
 
 E_BOOL_TYPE MatchZeroPlus(PT_STRING_OBJ ptPatObj, PT_PAT_CHAR ptPatChar);
-E_BOOL_TYPE MatchStrByZeroPlus(PT_PAT_CHAR ptPatChar, PT_STRING_OBJ ptStrObj);
+E_BOOL_TYPE DoMatchStrByZeroPlus(PT_PAT_CHAR ptPatChar, PT_STRING_OBJ ptStrObj);
 
 E_BOOL_TYPE MatchOnePlus(PT_STRING_OBJ ptPatObj, PT_PAT_CHAR ptPatChar);
-E_BOOL_TYPE MatchStrByOnePlus(PT_PAT_CHAR ptPatChar, PT_STRING_OBJ ptStrObj);
+E_BOOL_TYPE DoMatchStrByOnePlus(PT_PAT_CHAR ptPatChar, PT_STRING_OBJ ptStrObj);
 
-E_BOOL_TYPE MatchPlain(PT_STRING_OBJ ptPatObj, PT_PAT_CHAR ptPatChar);
-E_BOOL_TYPE MatchStrByPlain(PT_PAT_CHAR ptPatChar, PT_STRING_OBJ ptStrObj);
+E_BOOL_TYPE MatchNoModifier(PT_STRING_OBJ ptPatObj, PT_PAT_CHAR ptPatChar);
+E_BOOL_TYPE DoMatchStrByNoModifier(PT_PAT_CHAR ptPatChar, PT_STRING_OBJ ptStrObj);
+
+
+// 解析组合模式字符 表达形式   0|1  [01] 
+E_BOOL_TYPE GetOptCharsByOrExpress(PT_PAT_CHAR ptPatChar, PT_STRING_OBJ ptPatObj);
+E_BOOL_TYPE GetOptCharsBySetExpress(PT_PAT_CHAR ptPatChar, PT_STRING_OBJ ptPatObj);
+E_BOOL_TYPE GetOptCharsByNoExpress(PT_PAT_CHAR ptPatChar, PT_STRING_OBJ ptPatObj);
 
 
 /* ------------------------------ 全局变量 --------------------------------- */
 T_PATCHAR_MODIFIER g_patCharModifier[] = {
-    {MODIFIER_TYPE_FIXCOUNT, MatchFixCount, MatchStrByFixCount},
-    {MODIFIER_TYPE_QUESTIONMARK, MatchQuestionMark, MatchStrByQuestionMark},
-    {MODIFIER_TYPE_ZEROPLUS, MatchZeroPlus, MatchStrByZeroPlus},
-    {MODIFIER_TYPE_ONEPLUS, MatchOnePlus, MatchStrByOnePlus},
+    {MODIFIER_TYPE_FIXCOUNT, MatchFixCount, DoMatchStrByFixCount},
+    {MODIFIER_TYPE_QUESTIONMARK, MatchQuestionMark, DoMatchStrByQuestionMark},
+    {MODIFIER_TYPE_ZEROPLUS, MatchZeroPlus, DoMatchStrByZeroPlus},
+    {MODIFIER_TYPE_ONEPLUS, MatchOnePlus, DoMatchStrByOnePlus},
     
     // plain 必须放在最后， 以满足， 其他修饰符都未匹配，默认使用此匹配符号
-    {MODIFIER_TYPE_PLAIN,    MatchPlain,    MatchStrByPlain},
+    {MODIFIER_TYPE_NOMODIFIER,    MatchNoModifier,    DoMatchStrByNoModifier},
 };
+
+GetOptCharsFunc g_getOptCharsFunc[] = {
+    GetOptCharsByOrExpress, // 0|1
+    GetOptCharsBySetExpress,  // [01]
+
+    // no express must be set to tail, as default valid action
+    GetOptCharsByNoExpress,  // 0
+};
+
 
 /* ------------------------------ 公共函数 --------------------------------- */
 // MyPrintf == puts + format args
@@ -247,7 +265,7 @@ void InitStrObjStruct(PT_STRING_OBJ ptStrObj)
     ptStrObj->iIndex = 0;
 }
 
-// 从字符串中获取下一个字符
+// 从字符串中获取当前一个字符，并将指针指向下一个字符
 char GetCharFromStr(PT_STRING_OBJ ptStrObj)
 {
     char retChar = '\0';
@@ -267,6 +285,24 @@ char GetCharFromStr(PT_STRING_OBJ ptStrObj)
     return retChar;
 }
 
+// 从字符串中获取当前一个字符，不执行指针指向下一个字符
+char GetCharFromStr_purely(PT_STRING_OBJ ptStrObj)
+{
+    char retChar = '\0';
+    
+    if ( ptStrObj->iIndex >= ptStrObj->iLen )
+    {
+        // 已到尾部，无字符串可取
+        return '\0';
+    }
+    
+    // get current char
+    retChar = ptStrObj->szStr[ptStrObj->iIndex];
+    
+    return retChar;
+}
+
+//比较字符， 迁移str的index
 E_BOOL_TYPE MatchCharInStr(char cChar, PT_STRING_OBJ ptStrObj)
 {
     char cCurChar = GetCharFromStr(ptStrObj);
@@ -277,6 +313,42 @@ E_BOOL_TYPE MatchCharInStr(char cChar, PT_STRING_OBJ ptStrObj)
     
     if ( cChar == cCurChar )
     {
+        return TRUE;
+    }
+    
+    return FALSE;
+}
+
+//只比较字符， 不迁移str的index
+E_BOOL_TYPE MatchCharInStr_purely(char cChar, PT_STRING_OBJ ptStrObj)
+{
+    char cCurChar = GetCharFromStr_purely(ptStrObj);
+    if ( cCurChar == '\0' )
+    {
+        return FALSE;
+    }
+    
+    if ( cChar == cCurChar )
+    {
+        return TRUE;
+    }
+    
+    return FALSE;
+}
+
+//比较Optional字符， 比较成功迁移str的index
+E_BOOL_TYPE MatchOptCharsInStr(char* szOptChars, PT_STRING_OBJ ptStrObj)
+{
+    char cCurChar = GetCharFromStr_purely(ptStrObj);
+    if ( cCurChar == '\0' )
+    {
+        return FALSE;
+    }
+
+    // 字符串中含有字符
+    if ( strchr(szOptChars, cCurChar) )
+    {
+        ptStrObj->iIndex++;
         return TRUE;
     }
     
@@ -355,15 +427,15 @@ E_BOOL_TYPE MatchFixCount(PT_STRING_OBJ ptPatObj, PT_PAT_CHAR ptPatChar)
     return FALSE;
 }
 
-E_BOOL_TYPE MatchStrByFixCount(PT_PAT_CHAR ptPatChar, PT_STRING_OBJ ptStrObj)
+E_BOOL_TYPE DoMatchStrByFixCount(PT_PAT_CHAR ptPatChar, PT_STRING_OBJ ptStrObj)
 {
     int fixCount = ptPatChar->modifyPara;
-    char cChar = ptPatChar->cChar;
+    char* szOptChars = ptPatChar->szOptChars;
     
     int index = 0;
     for ( index=0; index<fixCount; index++ )
     {
-        if ( !MatchCharInStr(cChar, ptStrObj) )
+        if ( !MatchOptCharsInStr(szOptChars, ptStrObj) )
         {
             return FALSE;
         }
@@ -386,15 +458,12 @@ E_BOOL_TYPE MatchQuestionMark(PT_STRING_OBJ ptPatObj, PT_PAT_CHAR ptPatChar)
     return FALSE;
 }
 
-E_BOOL_TYPE MatchStrByQuestionMark(PT_PAT_CHAR ptPatChar, PT_STRING_OBJ ptStrObj)
+E_BOOL_TYPE DoMatchStrByQuestionMark(PT_PAT_CHAR ptPatChar, PT_STRING_OBJ ptStrObj)
 {
-    char cChar = ptPatChar->cChar;
-
-    char szChar[2] = {0};
-    szChar[0] = cChar;
+    char* szOptChars = ptPatChar->szOptChars;
     
     // 1? 先按照 1 来匹配
-    int span = strspn(ptStrObj->szStr+ptStrObj->iIndex, szChar);
+    int span = strspn(ptStrObj->szStr+ptStrObj->iIndex, szOptChars);
     if ( span >= 1 )
     {
         // 迁移一位
@@ -420,15 +489,12 @@ E_BOOL_TYPE MatchZeroPlus(PT_STRING_OBJ ptPatObj, PT_PAT_CHAR ptPatChar)
     return FALSE;
 }
 
-E_BOOL_TYPE MatchStrByZeroPlus(PT_PAT_CHAR ptPatChar, PT_STRING_OBJ ptStrObj)
+E_BOOL_TYPE DoMatchStrByZeroPlus(PT_PAT_CHAR ptPatChar, PT_STRING_OBJ ptStrObj)
 {
-    char cChar = ptPatChar->cChar;
+    char* szOptChars = ptPatChar->szOptChars;
 
-    char szChar[2] = {0};
-    szChar[0] = cChar;
-    
     // 贪婪匹配
-    int span = strspn(ptStrObj->szStr+ptStrObj->iIndex, szChar);
+    int span = strspn(ptStrObj->szStr+ptStrObj->iIndex, szOptChars);
     if ( span >= 1 )
     {
         // index迁移到不是 cChar 的字符
@@ -454,15 +520,12 @@ E_BOOL_TYPE MatchOnePlus(PT_STRING_OBJ ptPatObj, PT_PAT_CHAR ptPatChar)
     return FALSE;
 }
 
-E_BOOL_TYPE MatchStrByOnePlus(PT_PAT_CHAR ptPatChar, PT_STRING_OBJ ptStrObj)
+E_BOOL_TYPE DoMatchStrByOnePlus(PT_PAT_CHAR ptPatChar, PT_STRING_OBJ ptStrObj)
 {
-    char cChar = ptPatChar->cChar;
-
-    char szChar[2] = {0};
-    szChar[0] = cChar;
+    char* szOptChars = ptPatChar->szOptChars;
     
     // 贪婪匹配
-    int span = strspn(ptStrObj->szStr+ptStrObj->iIndex, szChar);
+    int span = strspn(ptStrObj->szStr+ptStrObj->iIndex, szOptChars);
     if ( span >= 1 )
     {
         // index迁移到不是 cChar 的字符
@@ -474,19 +537,19 @@ E_BOOL_TYPE MatchStrByOnePlus(PT_PAT_CHAR ptPatChar, PT_STRING_OBJ ptStrObj)
     return FALSE;
 }
 
-E_BOOL_TYPE MatchPlain(PT_STRING_OBJ ptPatObj, PT_PAT_CHAR ptPatChar)
+E_BOOL_TYPE MatchNoModifier(PT_STRING_OBJ ptPatObj, PT_PAT_CHAR ptPatChar)
 {
-    ptPatChar->modifyType = MODIFIER_TYPE_PLAIN;
+    ptPatChar->modifyType = MODIFIER_TYPE_NOMODIFIER;
     
     //作为普通字符，默认匹配通过
     return TRUE;
 }
 
-E_BOOL_TYPE MatchStrByPlain(PT_PAT_CHAR ptPatChar, PT_STRING_OBJ ptStrObj)
+E_BOOL_TYPE DoMatchStrByNoModifier(PT_PAT_CHAR ptPatChar, PT_STRING_OBJ ptStrObj)
 {
-    char cChar = ptPatChar->cChar;
+    char* szOptChars = ptPatChar->szOptChars;
 
-    if ( !MatchCharInStr(cChar, ptStrObj) )
+    if ( !MatchOptCharsInStr(szOptChars, ptStrObj) )
     {
         return FALSE;
     }
@@ -494,23 +557,128 @@ E_BOOL_TYPE MatchStrByPlain(PT_PAT_CHAR ptPatChar, PT_STRING_OBJ ptStrObj)
     return TRUE;
 }
 
+// 0|1
+E_BOOL_TYPE GetOptCharsByOrExpress(PT_PAT_CHAR ptPatChar, PT_STRING_OBJ ptPatObj)
+{
+    char cChar = 0;
+
+    // second char is not |, or express not santisfied
+    if ( '|' != ptPatObj->szStr[ptPatObj->iIndex+1] )
+    {
+        return FALSE;
+    }
+
+    // prevent 0| pattern string ocurring, assuring x|y structure complete
+    if ( '|'  == ptPatObj->szStr[ptPatObj->iLen-1] )
+    {
+        return FALSE;
+    }
+
+    cChar = GetCharFromStr(ptPatObj);
+    ptPatChar->szOptChars[0] = cChar;
+    ptPatChar->iOptCharsLen = 1;
+
+    while ( (cChar = GetCharFromStr_purely(ptPatObj)) == '|' )
+    {
+        // skip |
+        cChar = GetCharFromStr(ptPatObj);
+
+        // store x from |x
+        cChar = GetCharFromStr(ptPatObj);
+        ptPatChar->szOptChars[ptPatChar->iOptCharsLen] = cChar;
+        ptPatChar->iOptCharsLen++;
+    }
+
+    return TRUE;
+}
+
+// [01]
+E_BOOL_TYPE GetOptCharsBySetExpress(PT_PAT_CHAR ptPatChar, PT_STRING_OBJ ptPatObj)
+{
+    char cChar = 0;
+    int count = 0;
+    int span = 0;
+
+    cChar = GetCharFromStr_purely(ptPatObj);
+    // first letter is not the starting square bracket
+    if ( '[' != cChar )
+    {
+        return FALSE;
+    }
+
+    // count [ length
+    count++;
+
+    span = strspn(ptPatObj->szStr+ptPatObj->iIndex+1, "1234567890");
+    //[xx], xx length must be larger than 0
+    if ( span == 0 )
+    {
+        return FALSE;
+    }
+
+    // count span length
+    count += span;
+
+    // ending square bracket is not satisfied
+    if ( ptPatObj->szStr[count] != ']' )
+    {
+        return FALSE;
+    }
+
+    //count ] length
+    count++;
+
+    // copy xx to patChar, xx is in [xx]
+    strncpy(ptPatChar->szOptChars, ptPatObj->szStr+ptPatObj->iIndex+1, span);
+    ptPatChar->iOptCharsLen = span;
+
+    // index nagivate
+    ptPatObj->iIndex += count;
+
+    return TRUE;
+}
+
+// 0
+E_BOOL_TYPE GetOptCharsByNoExpress(PT_PAT_CHAR ptPatChar, PT_STRING_OBJ ptPatObj)
+{
+    ptPatChar->szOptChars[0] = GetCharFromStr(ptPatObj);
+    ptPatChar->iOptCharsLen =1;
+
+    // default action, must be OK
+    return TRUE;
+}
+
 // 从模式字符串中获取下一个模式字符
 E_RETURN_TYPE GetPatCharFromPattern(PT_PAT_CHAR ptPatChar, PT_STRING_OBJ ptPatObj)
 {
-    char cChar = GetCharFromStr(ptPatObj);
+    int index = 0;
+    int len = 0;
+    E_BOOL_TYPE bMatched = FALSE;
+    
+
+    char cChar = ptPatObj->szStr[ptPatObj->iIndex];
+    // pattern char exhausted, get fail
     if ( cChar == '\0' )
     {
-        // pattern char exhausted
         return FAIL;
     }
     
-    ptPatChar->cChar = cChar;
-    //MyPrintf("GetPatCharFromPattern cChar=%c", cChar);
+    // get pattern char's  optional chars, for combination express, aka 0|1
+    len = sizeof(g_getOptCharsFunc)/sizeof(GetOptCharsFunc);
+    bMatched = FALSE;
+    for ( index=0; index<len; index++ )
+    {
+        bMatched = g_getOptCharsFunc[index](ptPatChar, ptPatObj);
+        if ( bMatched == TRUE )
+        {
+            break;
+        }
+    }
+    MyPrintf("GetPatCharFromPattern ptPatChar->szOptChars=%s",  ptPatChar->szOptChars);
     
     //获取模式字符的 修饰符 例如 {xx}
-    int len = sizeof(g_patCharModifier)/sizeof(T_PATCHAR_MODIFIER);
-    int index = 0;
-    E_BOOL_TYPE bMatched = FALSE;
+    len = sizeof(g_patCharModifier)/sizeof(T_PATCHAR_MODIFIER);
+    bMatched = FALSE;
     for ( index=0; index<len; index++ )
     {
         bMatched = g_patCharModifier[index].matchModifier(ptPatObj, ptPatChar);
@@ -534,12 +702,13 @@ E_BOOL_TYPE MatchPatChar(PT_PAT_CHAR ptPatChar, PT_STRING_OBJ ptStrObj)
     int len = sizeof(g_patCharModifier)/sizeof(T_PATCHAR_MODIFIER);
     int index = 0;
     E_BOOL_TYPE bMatched = FALSE;
-    E_MODIFIER_TYPE eModType = MODIFIER_TYPE_PLAIN;
+    E_MODIFIER_TYPE eModType = MODIFIER_TYPE_NOMODIFIER;
     
     for ( index=0; index<len; index++ )
     {
         eModType = g_patCharModifier[index].modifyType;
-        
+
+        // 按照修饰符类型，对模式字符做匹配动作
         if ( eModType == ptPatChar->modifyType )
         {
             bMatched = g_patCharModifier[index].matchStrByModifier(ptPatChar, ptStrObj);
@@ -578,12 +747,12 @@ void GetMatchedList(PT_NODE ptHeadNode, char* pattern, char* str)
     {
         if ( !MatchPatChar(&tPatChar, &tStrObj) )
         {
-            MyPrintf("pattern char=%c match fail", tPatChar.cChar);
+            MyPrintf("pattern szOptChars=%s match fail", tPatChar.szOptChars);
             bAllPatCharMatched = FALSE;
             break;
         }
         
-        MyPrintf("pattern char=%c match success", tPatChar.cChar);
+        MyPrintf("pattern szOptChars=%s match success", tPatChar.szOptChars);
     }
     
     char* szMatchStr = NULL;
@@ -608,7 +777,7 @@ void TestPattern(char* pattern, char* str, char* strArr[])
    
     GetMatchedList(&tHeadNode, pattern, str);
    
-    PrintList(&tHeadNode);
+    //PrintList(&tHeadNode);
    
     AssertList(&tHeadNode, strArr);
    
@@ -629,7 +798,7 @@ Pattern     string          result
 */
 void TestPatternCase()
 {
-    // test plain
+    // test plain - no modifier
     char* strArr[] = {"35", NULL};
     TestPattern("35", "354", strArr);
    
@@ -650,14 +819,30 @@ void TestPatternCase()
     TestPattern("1?", "21123", strArr4);
     
     // test asterisk 
-	//"1*"        "11123"         "","1","11","111" -- 贪婪匹配一个最长值 
+    //"1*"        "11123"         "","1","11","111" -- 贪婪匹配一个最长值 
     char* strArr5[] = {"111", NULL};
     TestPattern("1*", "11123", strArr5);
     
+    char* strArr51[] = {"", NULL};
+    TestPattern("1*", "21123", strArr51);
+    
     // test asterisk 
-	//"1+"        "11123"         "","1","11","111"  -- 贪婪匹配一个最长值 
+    //"1+"        "11123"         "1","11","111"  -- 贪婪匹配一个最长值 
     char* strArr6[] = {"111", NULL};
     TestPattern("1+", "11123", strArr6);
+    
+    char* strArr61[] = {NULL};
+    TestPattern("1+", "21123", strArr61);
+    
+    // test or express
+    //"1|2|3"     "123"           "1"
+    char* strArr7[] = {"1", NULL};
+    TestPattern("1|2|3", "123", strArr7);
+    
+    // test set express
+    //"[12]+"     "1123"          "1", "11", "112"
+    char* strArr8[] = {"112", NULL};
+    TestPattern("[12]+", "1123", strArr8);
 }
 
 int main(void)
