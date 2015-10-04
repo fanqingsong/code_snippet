@@ -1,0 +1,3 @@
+---- InitStrObjStruct Matches (2 in 1 files) ----
+tagContentParsing.c:void InitStrObjStruct(PT_STRING_OBJ ptStrObj)
+tagContentParsing.c:	InitStrObjStruct(&tXmlStr);

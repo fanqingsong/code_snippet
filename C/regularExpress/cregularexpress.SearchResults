@@ -1,0 +1,53 @@
+---- ptPatChar Matches (54 in 1 files) ----
+cRegFunc.cpp:E_BOOL_TYPE MatchFixCount(PT_STRING_OBJ ptPatObj, PT_PAT_CHAR ptPatChar);
+cRegFunc.cpp:E_BOOL_TYPE DoMatchStrByFixCount(PT_PAT_CHAR ptPatChar, PT_STRING_OBJ ptStrObj);
+cRegFunc.cpp:E_BOOL_TYPE MatchQuestionMark(PT_STRING_OBJ ptPatObj, PT_PAT_CHAR ptPatChar);
+cRegFunc.cpp:E_BOOL_TYPE DoMatchStrByQuestionMark(PT_PAT_CHAR ptPatChar, PT_STRING_OBJ ptStrObj);
+cRegFunc.cpp:E_BOOL_TYPE MatchZeroPlus(PT_STRING_OBJ ptPatObj, PT_PAT_CHAR ptPatChar);
+cRegFunc.cpp:E_BOOL_TYPE DoMatchStrByZeroPlus(PT_PAT_CHAR ptPatChar, PT_STRING_OBJ ptStrObj);
+cRegFunc.cpp:E_BOOL_TYPE MatchOnePlus(PT_STRING_OBJ ptPatObj, PT_PAT_CHAR ptPatChar);
+cRegFunc.cpp:E_BOOL_TYPE DoMatchStrByOnePlus(PT_PAT_CHAR ptPatChar, PT_STRING_OBJ ptStrObj);
+cRegFunc.cpp:E_BOOL_TYPE MatchNoModifier(PT_STRING_OBJ ptPatObj, PT_PAT_CHAR ptPatChar);
+cRegFunc.cpp:E_BOOL_TYPE DoMatchStrByNoModifier(PT_PAT_CHAR ptPatChar, PT_STRING_OBJ ptStrObj);
+cRegFunc.cpp:E_BOOL_TYPE MatchFixCount(PT_STRING_OBJ ptPatObj, PT_PAT_CHAR ptPatChar)
+cRegFunc.cpp:        ptPatChar->modifyType = MODIFIER_TYPE_FIXCOUNT;
+cRegFunc.cpp:        ptPatChar->modifyPara = fixCount;
+cRegFunc.cpp:E_BOOL_TYPE DoMatchStrByFixCount(PT_PAT_CHAR ptPatChar, PT_STRING_OBJ ptStrObj)
+cRegFunc.cpp:    int fixCount = ptPatChar->modifyPara;
+cRegFunc.cpp:    char cChar = ptPatChar->cChar;
+cRegFunc.cpp:E_BOOL_TYPE MatchQuestionMark(PT_STRING_OBJ ptPatObj, PT_PAT_CHAR ptPatChar)
+cRegFunc.cpp:        ptPatChar->modifyType = MODIFIER_TYPE_QUESTIONMARK;
+cRegFunc.cpp:E_BOOL_TYPE DoMatchStrByQuestionMark(PT_PAT_CHAR ptPatChar, PT_STRING_OBJ ptStrObj)
+cRegFunc.cpp:    char cChar = ptPatChar->cChar;
+cRegFunc.cpp:E_BOOL_TYPE MatchZeroPlus(PT_STRING_OBJ ptPatObj, PT_PAT_CHAR ptPatChar)
+cRegFunc.cpp:        ptPatChar->modifyType = MODIFIER_TYPE_ZEROPLUS;
+cRegFunc.cpp:E_BOOL_TYPE DoMatchStrByZeroPlus(PT_PAT_CHAR ptPatChar, PT_STRING_OBJ ptStrObj)
+cRegFunc.cpp:    char cChar = ptPatChar->cChar;
+cRegFunc.cpp:E_BOOL_TYPE MatchOnePlus(PT_STRING_OBJ ptPatObj, PT_PAT_CHAR ptPatChar)
+cRegFunc.cpp:        ptPatChar->modifyType = MODIFIER_TYPE_ONEPLUS;
+cRegFunc.cpp:E_BOOL_TYPE DoMatchStrByOnePlus(PT_PAT_CHAR ptPatChar, PT_STRING_OBJ ptStrObj)
+cRegFunc.cpp:    char cChar = ptPatChar->cChar;
+cRegFunc.cpp:E_BOOL_TYPE MatchNoModifier(PT_STRING_OBJ ptPatObj, PT_PAT_CHAR ptPatChar)
+cRegFunc.cpp:    ptPatChar->modifyType = MODIFIER_TYPE_NOMODIFIER;
+cRegFunc.cpp:E_BOOL_TYPE DoMatchStrByNoModifier(PT_PAT_CHAR ptPatChar, PT_STRING_OBJ ptStrObj)
+cRegFunc.cpp:    char cChar = ptPatChar->cChar;
+cRegFunc.cpp:typedef E_BOOL_TYPE (*GetOptCharsFunc)(PT_PAT_CHAR ptPatChar, PT_STRING_OBJ ptPatObj);
+cRegFunc.cpp:E_BOOL_TYPE GetOptCharsByOrExpress(PT_PAT_CHAR ptPatChar, PT_STRING_OBJ ptPatObj)
+cRegFunc.cpp:    ptPatChar->szOptChars[0] = cChar;
+cRegFunc.cpp:    ptPatChar->iOptCharsLen = 1;
+cRegFunc.cpp:        ptPatChar->szOptChars[ptPatChar->iOptCharsLen] = cChar;
+cRegFunc.cpp:        ptPatChar->iOptCharsLen++;
+cRegFunc.cpp:E_BOOL_TYPE GetOptCharsBySetExpress(PT_PAT_CHAR ptPatChar, PT_STRING_OBJ ptPatObj)
+cRegFunc.cpp:    strncpy(ptPatChar->szOptChars, ptPatObj->szStr+1, span);
+cRegFunc.cpp:    ptPatChar->iOptCharsLen = span;
+cRegFunc.cpp:E_BOOL_TYPE GetOptCharsByNoExpress(PT_PAT_CHAR ptPatChar, PT_STRING_OBJ ptPatObj)
+cRegFunc.cpp:    ptPatChar->szOptChars[0] = GetCharFromStr(ptPatObj);
+cRegFunc.cpp:    ptPatChar->iOptCharsLen =1;
+cRegFunc.cpp:E_RETURN_TYPE GetPatCharFromPattern(PT_PAT_CHAR ptPatChar, PT_STRING_OBJ ptPatObj)
+cRegFunc.cpp:        bMatched = g_getOptCharsFunc[index](ptPatObj, ptPatChar);
+cRegFunc.cpp:    MyPrintf("GetPatCharFromPattern ptPatChar->szOptChars=%s",  ptPatChar->szOptChars);
+cRegFunc.cpp:        bMatched = g_patCharModifier[index].matchModifier(ptPatObj, ptPatChar);
+cRegFunc.cpp:E_BOOL_TYPE MatchPatChar(PT_PAT_CHAR ptPatChar, PT_STRING_OBJ ptStrObj)
+cRegFunc.cpp:    if( !ptPatChar || !ptStrObj )
+cRegFunc.cpp:        if ( eModType == ptPatChar->modifyType )
+cRegFunc.cpp:            bMatched = g_patCharModifier[index].matchStrByModifier(ptPatChar, ptStrObj);
