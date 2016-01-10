@@ -1,0 +1,151 @@
+#include <stdio.h>
+#include <string.h>
+#include <assert.h>
+#include <malloc.h>
+#include <stdarg.h>
+#include <ctype.h>
+
+typedef enum returnType {
+    FAIL = 0,
+    SUCCESS,
+} E_RETURN_TYPE;
+    
+typedef enum boolType {
+    FALSE = 0,
+    TRUE,
+} E_BOOL_TYPE;
+
+void printArr(int arr[], int size)
+{
+    int i = 0;
+
+    printf("arr element is \n");
+
+    for (i=0; i<size; i++)
+    {
+        printf("%d\n", arr[i]);
+    }
+}
+
+void SwapValue(int arr[], int index1, int index2)
+{
+    int tmp = arr[index1];
+
+    arr[index1] = arr[index2];
+
+    arr[index2] = tmp;
+}
+
+// select the extreme value to 0 element, 
+// 0~i-1 is non order list, and 0 element break the heap
+void HeapAdjust(int arr[], int breakIndex, int lastIndex)
+{
+    int breakVal = 0;
+    int leftChildIdx = 0;
+    int leftVal = 0;
+    int rightVal = 0;
+
+    // condiction is predicting that the left child of breaking node is existing
+    while ( (leftChildIdx=2*breakIndex+1) <= lastIndex )
+    {
+        leftVal = arr[leftChildIdx];
+        rightVal = arr[leftChildIdx+1];
+        breakVal = arr[breakIndex];
+
+        // right child is beyond range, set its value to minmun value
+        if (leftChildIdx+1 > lastIndex)
+        {
+            rightVal = 0X1 << (sizeof(int)*8 -1);
+        }
+
+        // find the max, swap with break node
+        if ( leftVal > rightVal )
+        {
+                if ( breakVal < leftVal )
+                {
+                    SwapValue(arr, breakIndex, leftChildIdx);
+                    breakIndex = leftChildIdx;
+                }
+                else
+                {
+                    // break node is max, no more action need to be done
+                    break;
+                }
+        }
+        else
+        {
+                if ( breakVal < rightVal )
+                {
+                    SwapValue(arr, breakIndex, leftChildIdx+1);
+                    breakIndex = leftChildIdx+1;
+                }
+                else
+                {
+                    // break node is max, no more action need to be done
+                    break;
+                }
+        }
+    }
+}
+
+// translate arr to heap with max top(0 index element is  max)
+E_RETURN_TYPE CreateHeap(int arr[], int lastIdx)
+{
+    int i = 0;
+    int lastNonLeafIdx = lastIdx/2;
+
+    // for creating a heap, must adjust from last non leaf node to 0 index node
+    /*
+            0            ----- 0 height
+          1  2          ----- 1 height
+        .........
+        x      y .. z   ----- n height
+      x1 x2             ----- n+1 height
+
+      note: as above, lastNonLeafIdx is x,  y..z node has no child
+      first, for handling n height node(x),   we get the max of  x, x1, x2, save as x
+      second, for handling n-1 height nodes( .... ), we get the max of the tree with every node as root
+      ...
+        until reach 0 height, we get the max of tree with 0 as root, ie we get max top heap
+    */
+    for ( i=lastNonLeafIdx; i>=0; i-- )
+    {
+        HeapAdjust(arr, i, lastIdx);
+printf("--------- enter CreateHeap HeapAdjust %d\n", i);
+	printArr(arr, lastIdx+1);
+    }
+}
+
+E_RETURN_TYPE HeapSort(int arr[], int size)
+{
+    int i = 0;
+
+    CreateHeap(arr, size-1);
+printf("--------- after CreateHeap");
+	printArr(arr, size);
+
+    /* execute size-1 times loop  */
+    for ( i=size-1; i>0; i-- )
+    {
+        // now arr[i] is the extreme value from 0 ~ i
+        SwapValue(arr, 0, i);
+
+        // 0~i-1 is non order list, and 0 element break the heap
+        HeapAdjust(arr, 0, i-1);        
+    }
+}
+
+int main(void)
+{
+    int arr [] = {8, 5, 6, 7};
+
+printf("--------- before heap sort");
+    printArr(arr, sizeof(arr)/sizeof(int));
+
+    HeapSort(arr, sizeof(arr)/sizeof(int));
+    
+printf("--------- after heap sort");
+    printArr(arr, sizeof(arr)/sizeof(int));
+}
+
+
