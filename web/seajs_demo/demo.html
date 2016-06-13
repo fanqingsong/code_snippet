@@ -1,0 +1,20 @@
+<html>
+<head> 
+        <!--This sets the baseUrl to the "scripts" directory, and
+            loads a script that will have a module ID of 'main'-->
+        <script src="./sea.js"></script>
+        <style>
+
+        </style>
+        <script>
+        seajs.use('one', function(one) {
+          one.sayHello();
+          one.callTwo();
+        });
+        </script>
+</head> 
+<body>
+        <h1>hello world!</h1>
+</body>
+</html>
+
