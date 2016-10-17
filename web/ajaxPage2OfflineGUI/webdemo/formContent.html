@@ -1,0 +1,16 @@
+<input type="text" name="Frm_username" id="Frm_username" value="">
+<input type="password" name="Frm_password" id="Frm_password" value="">
+<button type="submit">submit</button>
+
+<script>
+$(document).ready(function () {
+   $.getJSON('./test.json', function(data) {
+    $("#Frm_username").val(data.username);
+    $("#Frm_password").val(data.password);
+   });
+});
+</script>
+
+
+
+

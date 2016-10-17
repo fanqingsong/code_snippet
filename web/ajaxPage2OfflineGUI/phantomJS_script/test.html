@@ -1,0 +1,73 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.js"></script>
+</head>
+<body><div id="overwriteAjaxFunc">
+<script type="text/javascript">
+$(document).ready(function () {
+  $.get = function (url, callback) {
+     console.log('enter $.get refactor')
+     url = url.match('./(.*)')[1];
+     var data = $('[id="'+url+'"]').text();
+     callback(data);
+  }
+
+  $.getJSON = function (url, callback) {
+     console.log('enter $.getJSON refactor')
+     url = url.match('./(.*)')[1];
+     var data = $('[id="'+url+'"]').text();
+     data = JSON.parse(data);
+     callback(data);
+  }  
+});
+</script>
+            </div>
+  <img src="./favicon.ico">
+
+  <form id="realform"><input type="text" name="Frm_username" id="Frm_username" value="">
+<input type="password" name="Frm_password" id="Frm_password" value="">
+<button type="submit">submit</button>
+
+<script>
+$(document).ready(function () {
+   $.getJSON('./test.json', function(data) {
+    $("#Frm_username").val(data.username);
+    $("#Frm_password").val(data.password);
+   });
+});
+</script>
+
+
+
+
+</form>
+
+  <script>
+    $(document).ready(function (){
+      $.get("./formContent.html", function (data) {
+        $("#realform").html(data)
+      })
+    })
+  </script>
+
+
+<div style="display:none" id="formContent.html">&lt;input type="text" name="Frm_username" id="Frm_username" value=""&gt;
+&lt;input type="password" name="Frm_password" id="Frm_password" value=""&gt;
+&lt;button type="submit"&gt;submit&lt;/button&gt;
+
+&lt;script&gt;
+$(document).ready(function () {
+   $.getJSON('./test.json', function(data) {
+    $("#Frm_username").val(data.username);
+    $("#Frm_password").val(data.password);
+   });
+});
+&lt;/script&gt;
+
+
+
+
+</div><div style="display:none" id="test.json">{
+    "username":"fanqingsongaaa",
+    "password":"xxxx"
+}</div></body></html>
