@@ -1,0 +1,21 @@
+{
+  "name": "js_unit_test",
+  "version": "1.0.0",
+  "description": "test",
+  "main": "index.js",
+  "scripts": {
+    "test": "node ./node_modules/jasmine/bin/jasmine.js"
+  },
+  "keywords": [
+    "jasmine"
+  ],
+  "author": "qsfan",
+  "license": "MIT",
+  "dependencies": {
+    "npm": "^6.3.0"
+  },
+  "devDependencies": {
+    "jasmine": "^3.1.0",
+    "jasmine-ts-console-reporter": "^3.1.1"
+  }
+}
