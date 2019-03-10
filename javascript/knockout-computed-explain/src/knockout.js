@@ -53,9 +53,14 @@ ko.computed = (evalFunc) => {
     // store current observable value
     let currentVal = "";
 
+    let unValuated = true;
+
     let computedObservable = () => {
 
-        computedObservable.callEvalWithDeps();
+        if (unValuated){
+            computedObservable.callEvalWithDeps();
+            unValuated = false;
+        }
 
         return currentVal;
     }
