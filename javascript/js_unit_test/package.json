@@ -12,7 +12,7 @@
   "author": "qsfan",
   "license": "MIT",
   "dependencies": {
-    "npm": "^6.3.0"
+    "npm": "^6.13.4"
   },
   "devDependencies": {
     "jasmine": "^3.1.0",
