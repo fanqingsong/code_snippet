@@ -1,0 +1,96 @@
+#
+# A fatal error has been detected by the Java Runtime Environment:
+#
+#  SIGSEGV (0xb) at pc=0x00007fc4cf57f151, pid=7249, tid=7300
+#
+# JRE version: OpenJDK Runtime Environment (11.0.4+11) (build 11.0.4+11-post-Ubuntu-1ubuntu218.04.3)
+# Java VM: OpenJDK 64-Bit Server VM (11.0.4+11-post-Ubuntu-1ubuntu218.04.3, mixed mode, sharing, tiered, compressed oops, g1 gc, linux-amd64)
+# Problematic frame:
+# V  [libjvm.so+0xe0f151]
+#
+# Core dump will be written. Default location: core.7249 (may not exist)
+#
+# If you would like to submit a bug report, please visit:
+#   https://bugs.launchpad.net/ubuntu/+source/openjdk-lts
+#
+
+---------------  S U M M A R Y ------------
+
+Command Line: -Xmx1g org.apache.spark.deploy.SparkSubmit --conf spark.app.name=KafkaWordCount pyspark-shell
+
+Host: Intel(R) Core(TM) i7-8650U CPU @ 1.90GHz, 8 cores, 31G, Ubuntu 18.04.2 LTS
+Time: Thu Jul  2 17:06:40 2020 DST elapsed time: 7386 seconds (0d 2h 3m 6s)
+
+---------------  T H R E A D  ---------------
+
+Current thread (0x00007fc4c802f800):  GCTaskThread "GC Thread#0" [stack: 0x00007fc4cc952000,0x00007fc4cca52000] [id=7300]
+
+Stack: [0x00007fc4cc952000,0x00007fc4cca52000],  sp=0x00007fc4cca50e10,  free space=1019k
+Native frames: (J=compiled Java code, A=aot compiled Java code, j=interpreted, Vv=VM code, C=native code)
+V  [libjvm.so+0xe0f151]
+V  [libjvm.so+0xd7aeea]
+V  [libjvm.so+0xbc4a5e]
+
+
+siginfo: si_signo: 11 (SIGSEGV), si_code: 1 (SEGV_MAPERR), si_addr: 0x0000000000000010
+
+Register to memory mapping:
+
+RAX=0x0 is NULL
+RBX=0x00007fc4a2d709c0 points into unknown readable memory: 00 00 00 00 00 00 00 00
+RCX=0x0 is NULL
+RDX=0x0 is NULL
+RSP=0x00007fc4cca50e10 points into unknown readable memory: 70 0e a5 cc c4 7f 00 00
+RBP=0x00007fc4cca50e40 points into unknown readable memory: c0 0e a5 cc c4 7f 00 00
+RSI=0x0 is NULL
+RDI=0x00007fc4cca50d70 points into unknown readable memory: 90 06 ba cf c4 7f 00 00
+R8 =0x0 is NULL
+R9 =
+[error occurred during error reporting (printing register info), id 0xb, SIGSEGV (0xb) at pc=0x00007fc4cee987b0]
+
+Registers:
+RAX=0x0000000000000000, RBX=0x00007fc4a2d709c0, RCX=0x0000000000000000, RDX=0x0000000000000000
+RSP=0x00007fc4cca50e10, RBP=0x00007fc4cca50e40, RSI=0x0000000000000000, RDI=0x00007fc4cca50d70
+R8 =0x0000000000000000, R9 =0x00000000ffffffff, R10=0x0000000000000000, R11=0x0000000000000000
+R12=0x00007fc4cca50e1c, R13=0x00007fc4c802f800, R14=0x0000000000000007, R15=0x00007fc4d0a1f870
+RIP=0x00007fc4cf57f151, EFLAGS=0x0000000000010202, CSGSFS=0x00000053002b0033, ERR=0x0000000000000000
+  TRAPNO=0x0000000000000000
+
+Top of Stack: (sp=0x00007fc4cca50e10)
+0x00007fc4cca50e10:   00007fc4cca50e70 ffffffffc802f800
+0x00007fc4cca50e20:   00007fc4cfb16398 00007fc4c802f800
+0x00007fc4cca50e30:   00007fc4cc952000 0000000000100000
+0x00007fc4cca50e40:   00007fc4cca50ec0 00007fc4cf4eaeea 
+
+Instructions: (pc=0x00007fc4cf57f151)
+0x00007fc4cf57f051:   35 67 48 0f 00 31 c0 4c 89 e7 83 c3 01 e8 0d 03
+0x00007fc4cf57f061:   dc ff 41 39 5e 08 77 d7 5b 4c 89 e7 41 5c 41 5d
+0x00007fc4cf57f071:   41 5e 5d e9 c7 09 dc ff 0f 1f 80 00 00 00 00 31
+0x00007fc4cf57f081:   c0 4c 89 ee 4c 89 e7 e8 e3 02 dc ff 83 c3 01 41
+0x00007fc4cf57f091:   39 5e 08 77 aa 5b 4c 89 e7 41 5c 41 5d 41 5e 5d
+0x00007fc4cf57f0a1:   e9 9a 09 dc ff 66 2e 0f 1f 84 00 00 00 00 00 48
+0x00007fc4cf57f0b1:   8b 87 20 03 00 00 55 48 89 e5 0f b6 40 28 5d c3
+0x00007fc4cf57f0c1:   90 0f 1f 40 00 66 2e 0f 1f 84 00 00 00 00 00 48
+0x00007fc4cf57f0d1:   8b 87 20 03 00 00 55 48 89 e5 0f b6 40 29 5d c3
+0x00007fc4cf57f0e1:   90 0f 1f 40 00 66 2e 0f 1f 84 00 00 00 00 00 55
+0x00007fc4cf57f0f1:   48 89 e5 53 48 89 fb 48 83 ec 08 e8 5f 63 f6 ff
+0x00007fc4cf57f101:   48 83 c4 08 48 89 df be 09 00 00 00 5b 5d e9 fc
+0x00007fc4cf57f111:   35 da ff 66 90 66 2e 0f 1f 84 00 00 00 00 00 55
+0x00007fc4cf57f121:   48 89 e5 41 56 41 55 41 54 53 4c 8d 65 dc 49 89
+0x00007fc4cf57f131:   fd 48 83 ec 10 66 2e 0f 1f 84 00 00 00 00 00 49
+0x00007fc4cf57f141:   8b 85 20 03 00 00 48 8b 78 30 48 8b 07 ff 50 18
+0x00007fc4cf57f151:   8b 70 10 48 89 c3 4c 89 e7 49 89 d6 e8 2e 1c 98
+0x00007fc4cf57f161:   ff 48 8b 03 44 89 f6 48 89 df ff 10 4c 89 e7 e8
+0x00007fc4cf57f171:   5b 1c 98 ff 49 8b 85 20 03 00 00 48 8b 78 30 48
+0x00007fc4cf57f181:   8b 07 ff 50 20 eb b8 0f 1f 84 00 00 00 00 00 55
+0x00007fc4cf57f191:   48 8d 15 b8 71 80 ff 48 89 e5 41 54 53 48 8b 07
+0x00007fc4cf57f1a1:   49 89 fc 48 89 f3 48 8b 80 88 00 00 00 48 39 d0
+0x00007fc4cf57f1b1:   75 45 48 8b 97 08 03 00 00 48 8d 05 77 df 07 00
+0x00007fc4cf57f1c1:   48 85 d2 48 0f 44 d0 48 8d 35 34 d2 09 00 48 89
+0x00007fc4cf57f1d1:   df 31 c0 e8 97 01 dc ff 4c 89 e7 48 89 de 31 d2
+0x00007fc4cf57f1e1:   e8 4a 5b f6 ff 48 89 df 5b 41 5c 5d e9 4e 08 dc
+0x00007fc4cf57f1f1:   ff 66 0f 1f 44 00 00 ff d0 48 89 c2 eb c9 90 55
+0x00007fc4cf57f201:   48 8d 15 e8 fe ff ff 48 89 e5 53 48 89 fb 48 83
+0x00007fc4cf57f211:   ec 08 48 8b 07 48 8b 80 b8 00 00 00 48 39 d0 75
+0x00007fc4cf57f221:   2e e8 39 62 f6 ff be 09 00 00 00 48 89 df e8 dc
+0x00007fc4cf57f231:   34 da ff 48 8b
