@@ -11,9 +11,9 @@ def KafkaWordCount(zkQuorum, group, topics, numThreads):
     sc = SparkContext(conf=spark_conf)
     sc.setLogLevel("ERROR")
     ssc = StreamingContext(sc, 1)
-    ssc.checkpoint("file:///usr/local/spark/checkpoint")
+    #ssc.checkpoint("file:///usr/local/spark/checkpoint")
     # 这里表示把检查点文件写入分布式文件系统HDFS，所以要启动Hadoop
-    # ssc.checkpoint(".")
+    ssc.checkpoint(".")
     topicAry = topics.split(",")
     # 将topic转换为hashmap形式，而python中字典就是一种hashmap
     topicMap = {}
