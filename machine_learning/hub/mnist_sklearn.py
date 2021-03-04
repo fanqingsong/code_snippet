@@ -9,6 +9,8 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.utils import check_random_state
 
 from hub import Dataset
+import cv2 as cv
+
 
 print(__doc__)
 
@@ -65,3 +67,23 @@ score = clf.score(X_test, y_test)
 # print('Best C % .4f' % clf.C_)
 print("Sparsity with L1 penalty: %.2f%%" % sparsity)
 print("Test score with L1 penalty: %.4f" % score)
+
+# now enter predicting part
+# 读图片
+img = cv.imread('images/three.png')
+# 灰度图
+img_gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
+# 二值化
+_, img_bin = cv.threshold(img_gray, 127, 255, cv.THRESH_BINARY)
+# Resize
+img_resized = cv.resize(img_bin, (28,28), interpolation=cv.INTER_AREA)
+img_normal = 255 - img_resized
+# 保存图片
+cv.imwrite('images/three_normal.jpg', img_normal)
+
+# flat to one dimension
+one_digit_features = img_normal.reshape((-1))
+
+result = clf.predict([one_digit_features])
+print("------ for three digit picture, the predicted result is ", result)
+
