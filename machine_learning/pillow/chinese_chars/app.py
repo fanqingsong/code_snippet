@@ -28,15 +28,22 @@ def make_background_generator():
 
 
 def draw_char_on_image(char_image, char, font_path):
-    font_size = np.random.randint(height // 2, height // 6 * 5)
+    font_size = height // 6 * 5
+    if not regular_mode:
+        font_size = np.random.randint(height // 2, height // 6 * 5)
 
     font = ImageFont.truetype(font_path, font_size, encoding="utf-8")
 
     draw = ImageDraw.Draw(char_image)
 
-    r, g, b = np.random.randint(150, 255), np.random.randint(150, 255), np.random.randint(150, 255)
-    rgb = (r, g, b)
+    # font color is black by default
+    rgb = (0, 0, 0)
+    if not regular_mode:
+        r, g, b = np.random.randint(150, 255), np.random.randint(150, 255), np.random.randint(150, 255)
+        rgb = (r, g, b)
+
     xy = ((height - font_size) // 2, (width - font_size) // 2)
+
     draw.text(xy, char, rgb, font=font)
 
 
@@ -52,7 +59,34 @@ def shear_image(char_image):
     return char_image
 
 
-def make_char_image_generator(char, n=3):
+def get_char_image(char, font_path):
+    # setup white background
+    image_data = np.zeros(image_shape, dtype="u1")
+    image_data.fill(255)
+    char_image = Image.fromarray(image_data)
+
+    draw_char_on_image(char_image, char, font_path)
+
+    # uglify the form of char
+    if not regular_mode:
+        char_image = char_image.rotate(np.random.randint(-100, 100))
+
+        char_image = char_image.filter(ImageFilter.GaussianBlur(radius=0.7))
+
+        char_image = shear_image(char_image)
+
+    return char_image
+
+
+def make_char_image_generator_for_all_fonts(char):
+    font_paths = gb.glob(os.path.join(font_dir, "*"))
+    print(font_paths)
+
+    for font_path in font_paths:
+        yield get_char_image(char, font_path)
+
+
+def make_char_image_generator_randomly(char, n):
     font_paths = gb.glob(os.path.join(font_dir, "*"))
     print(font_paths)
 
@@ -63,18 +97,20 @@ def make_char_image_generator(char, n=3):
         else:
             n -= 1
 
-        char_image = Image.fromarray(np.zeros(image_shape, dtype="u1"))
-
         font_path = font_paths[np.random.randint(font_count)]
-        draw_char_on_image(char_image, char, font_path)
 
-        char_image = char_image.rotate(np.random.randint(-100, 100))
-
-        char_image = char_image.filter(ImageFilter.GaussianBlur(radius=0.7))
-
-        char_image = shear_image(char_image)
+        char_image = get_char_image(char, font_path)
 
         yield char_image
+
+
+def make_char_image_generator(char, random=False, n=3):
+    if not random:
+        char_image_generator = make_char_image_generator_for_all_fonts(char)
+        return char_image_generator
+
+    char_image_generator = make_char_image_generator_randomly(char, n)
+    return char_image_generator
 
 
 def get_all_chars(chars_file):
@@ -103,22 +139,29 @@ def main():
 
         char_dir = prepare_one_char_dir(one_char)
 
-        char_image_generator = make_char_image_generator(one_char, n=10)
+        char_image_generator = make_char_image_generator(one_char)
         background_generator = make_background_generator()
 
         char_and_background_generator = zip(char_image_generator, background_generator)
 
         for index, (char, back) in enumerate(char_and_background_generator):
-            img_blended = np.array(char) // 5 * 3 + np.array(back) // 5 * 2
+            img_data = np.array(char)
+
+            # need to blend one background pic
+            if not regular_mode:
+                img_data = np.array(char) // 5 * 3 + np.array(back) // 5 * 2
 
             img_path = os.path.join(char_dir, str(index) + ".jpg")
-            img = Image.fromarray(img_blended)
+            img = Image.fromarray(img_data)
             img.save(img_path, "JPEG")
 
 
 height, width = 64, 64
 image_size = (height, width)
 image_shape = (*image_size, 3)
+
+# white background and black font
+regular_mode = True
 
 output_dir = "output"
 background_dir = "background"
