@@ -141,20 +141,24 @@ def sift_sim(path_a, path_b):
 
   # match.distance is a float between {0:100} - lower means more similar
   matches = bf.match(desc_a, desc_b)
-  similar_regions = [i for i in matches if i.distance < 30]
+  similar_regions = [i for i in matches if i.distance < 70]
   if len(matches) == 0:
     return 0
   return len(similar_regions) / len(matches)
 
 
 if __name__ == '__main__':
-  img_a = './images/two.png'
+  img_a = './images/two.jpeg'
   img_b = './images/two_1.png'
+
+  print(f"image({img_a}) vs image({img_b})")
+
   # get the similarity values
-  structural_sim = structural_sim(img_a, img_b)
-  pixel_sim = pixel_sim(img_a, img_b)
-  sift_sim = sift_sim(img_a, img_b)
-  emd = earth_movers_distance(img_a, img_b)
-  print(structural_sim, pixel_sim, sift_sim, emd)
+  # structural_sim = structural_sim(img_a, img_b)
+  # pixel_sim = pixel_sim(img_a, img_b)
+  sift_sim_rate = sift_sim(img_a, img_b)
+  # emd = earth_movers_distance(img_a, img_b)
+  #print(structural_sim, pixel_sim, sift_sim, emd)
+  print(f"sift_sim = {sift_sim_rate}")
 
 
