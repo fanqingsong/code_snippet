@@ -30,6 +30,7 @@ bool checkCutnum(int cutnum) {
 	}
 
 	while (true) {
+		//cout << "!! cutnum =" << cutnum << endl;
 		if (cutnum % 2 == 0) {
 			cutnum /= 2;
 			continue;
@@ -38,6 +39,8 @@ bool checkCutnum(int cutnum) {
 		if (cutnum != 3) {
 			cout << "cutnum must be 2 power times 6." << endl;
 			return false;
+		} else {
+			break;
 		}
 	}
 
@@ -58,9 +61,13 @@ int main() {
 
 	cout << "cutnum is " << cutnum << endl;
 
+	cout << "Now check cutnum" << endl;
+
 	if (!checkCutnum(cutnum)) {
 		return 0;
 	}
+
+	cout << "Now calculate edge length." << endl;
 
 	edgeLen = getEdgeLen(cutnum);
 
