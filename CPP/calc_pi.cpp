@@ -29,6 +29,18 @@ bool checkCutnum(int cutnum) {
 		return false;
 	}
 
+	while (true) {
+		if (cutnum % 2 == 0) {
+			cutnum /= 2;
+			continue;
+		}
+
+		if (cutnum != 3) {
+			cout << "cutnum must be 2 power times 6." << endl;
+			return false;
+		}
+	}
+
 	return true;
 }
 
