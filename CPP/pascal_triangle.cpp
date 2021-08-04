@@ -1,37 +1,42 @@
 #include <iostream>
+#include <iomanip>
 #include <cmath>
 
 using namespace std;
 
 int main() {
-	int cutnum = 0;
-	double edgeLen = 0;
-	double quasiPerimeter = 0;
-	double quasiPI = 0;
+	int previous[100] = {0};
+	int current[100] = {0};
 
-	//printf("hello world\r\n");
+	previous[1] = 1;
+	previous[2] = 1;
 
-	cout << "please input cutnum for cutting circle, like 6, 12, 24, 48, ..." << endl;
+	int level = 3;
 
-	cin >> cutnum;
+	cout << "please intput level that you want." << endl;
+	cin >> level;
 
-	cout << "cutnum is " << cutnum << endl;
+	cout << "level you inputted =" << level << endl;
 
-	cout << "Now check cutnum" << endl;
+	for (int i = 3; i <= level; i++) {
+		current[1] = 1;
 
-	if (!checkCutnum(cutnum)) {
-		return 0;
+		for (int j = 2; j <= i - 1; j++) {
+			current[j] = previous[j] + previous[j - 1];
+		}
+
+		current[i] = 1;
+
+		for (int k = 1; k <= i; k++) {
+			previous[k] = current[k];
+		}
 	}
 
-	cout << "Now calculate edge length." << endl;
-
-	edgeLen = getEdgeLen(cutnum);
-
-	quasiPerimeter = cutnum * edgeLen;
-
-	quasiPI = quasiPerimeter / 2;
-
-	cout << "the quasi PI is " << quasiPI << endl;
+	// print
+	for (int k = 1; k <= level; k++) {
+		cout << setw(3) << current[k];
+	}
+	cout << endl;
 
 	return 0;
 }
