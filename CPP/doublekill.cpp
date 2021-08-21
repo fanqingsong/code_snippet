@@ -108,21 +108,21 @@ void init_dispatch_cards() {
 	dispatch_cards(player2_cards, 3);
 
 	cout << "player1 got:" << endl;
-	for (auto it : player1_cards) {
-		cout << it << " ";
+	for (int i = 0; i < player1_cards.size(); i++) {
+		cout << player1_cards[i] << " ";
 	}
 	cout << endl;
 
 	cout << "player2 got:" << endl;
-	for (auto it : player2_cards) {
-		cout << it << " ";
+	for (int i = 0; i < player2_cards.size(); i++) {
+		cout << player2_cards[i] << " ";
 	}
 	cout << endl;
 }
 
 bool have_target_card(vector<string> &card_set, string target_card) {
-	for (auto it : card_set) {
-		if (it == target_card) {
+	for (int i = 0; i < card_set.size(); i++) {
+		if (card_set[i] == target_card) {
 			return true;
 		}
 	}
