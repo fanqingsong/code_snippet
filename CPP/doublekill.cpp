@@ -1,6 +1,5 @@
 #include <iostream>
 #include <vector>
-#include <algorithm>    // std::shuffle
 #include <stdlib.h>     /* srand, rand */
 #include <time.h>       /* time */
 
@@ -14,12 +13,24 @@ int player1_bloods = 5;
 vector<string> player2_cards;
 int player2_bloods = 5;
 
+class RoundResult{
+	public:
+		string host;
+		string guest;
+		string host_card;
+		string guest_card;
+};
+
+vector<RoundResult> rounds_result;
 
 void initialize() {
 	cout << "prepare all cards..." << endl;
 
-	for (int i = 0; i < 50; i++) {
+	for (int i = 0; i < 70; i++) {
 		all_cards.push_back("kill");
+	}
+
+	for (int i = 0; i < 50; i++) {
 		all_cards.push_back("dodge");
 	}
 
@@ -167,13 +178,13 @@ bool drop_one_card(vector<string> &card_set, string target_card) {
 	return true;
 }
 
-bool fight_one_round(vector<string> &host_card_set, vector<string> &guest_card_set, int &guest_bloods) {
+bool host_do_kill_attack(vector<string> &host_card_set) {
 	bool is_success = false;
 
-	cout << "------------- one round begin ------------" << endl;
-
 	cout << "host check kill card." << endl;
-	if (!have_target_card(host_card_set, "kill")) {
+
+	is_success = have_target_card(host_card_set, "kill");
+	if (!is_success) {
 		cout << "host have no kill card, pass." << endl;
 
 		update_one_card(host_card_set);
@@ -187,15 +198,21 @@ bool fight_one_round(vector<string> &host_card_set, vector<string> &guest_card_s
 	is_success = dispatch_cards(host_card_set, 1);
 	if (!is_success) {
 		cout << "no card to dispatch to host" << endl;
-		return true;
 	}
 
-	cout << "host want to kill you, come on, give dodge." << endl;
+	return true;
+}
+
+bool guest_do_dodge_defense(vector<string> &guest_card_set, int &guest_bloods) {
+	bool is_success = false;
 
 	cout << "guest check dodge card." << endl;
-	if (!have_target_card(guest_card_set, "dodge")) {
+
+	is_success = have_target_card(guest_card_set, "dodge");
+	if (!is_success) {
 		cout << "guest have no dodge card, blood losed one." << endl;
 		guest_bloods--;
+
 		return false;
 	}
 
@@ -208,10 +225,83 @@ bool fight_one_round(vector<string> &host_card_set, vector<string> &guest_card_s
 	is_success = dispatch_cards(guest_card_set, 1);
 	if (!is_success) {
 		cout << "no card to dispatch to guest" << endl;
-		return true;
 	}
 
-	cout << "------------- one round end ------------" << endl;
+	return true;
+}
+
+bool challenge_by_player1() {
+	bool is_success = false;
+
+	RoundResult round_result;
+	round_result.host = "player1";
+	round_result.guest = "player2";
+	round_result.host_card = "Pass";
+	round_result.guest_card = "Pass";
+
+	is_success = host_do_kill_attack(player1_cards);
+	if (!is_success) {
+		cout << "host has no kill card to toss." << endl;
+		rounds_result.push_back(round_result);
+		return false;
+	} 
+
+	round_result.host_card = "kill";
+
+	cout << "host want to kill you, come on, give dodge." << endl;
+
+	is_success = guest_do_dodge_defense(player2_cards, player2_bloods);
+	if (!is_success) {
+		rounds_result.push_back(round_result);
+
+		if (player2_bloods <= 0) {
+			return true;
+		}
+
+		return false;
+	}
+
+	round_result.guest_card = "dodge";
+
+	rounds_result.push_back(round_result);
+	return false;
+}
+
+bool challenge_by_player2() {
+	bool is_success = false;
+
+	RoundResult round_result;
+	round_result.host = "player2";
+	round_result.guest = "player1";
+	round_result.host_card = "Pass";
+	round_result.guest_card = "Pass";
+
+	is_success = host_do_kill_attack(player2_cards);
+	if (!is_success) {
+		cout << "host has no kill card to toss." << endl;
+		rounds_result.push_back(round_result);
+		return false;
+	}
+
+	round_result.host_card = "kill";
+
+	cout << "host want to kill you, come on, give dodge." << endl;
+
+	is_success = guest_do_dodge_defense(player1_cards, player1_bloods);
+	if (!is_success) {
+		rounds_result.push_back(round_result);
+
+		if (player1_bloods <= 0) {
+			return true;
+		}
+
+		return false;
+	}
+
+	round_result.guest_card = "dodge";
+
+	rounds_result.push_back(round_result);
+
 	return false;
 }
 
@@ -226,12 +316,19 @@ int main() {
 
 	while (true) {
 		bool is_end = false;
-		is_end = fight_one_round(player1_cards, player2_cards, player2_bloods);
+
+		cout << "------------- one round begin ------------" << endl;
+		is_end = challenge_by_player1();
+		cout << "------------- one round end ------------" << endl;
+
 		if (is_end) {
 			break;
 		}
 
-		is_end = fight_one_round(player2_cards, player1_cards, player1_bloods);
+		cout << "------------- one round begin ------------" << endl;
+		is_end = challenge_by_player2();
+		cout << "------------- one round end ------------" << endl;
+
 		if (is_end) {
 			break;
 		}
@@ -239,4 +336,14 @@ int main() {
 
 	cout << "bloods of player1 vs player2:" << endl;
 	cout << player1_bloods << ":" << player2_bloods << endl;
+
+	for(int i=0; i<rounds_result.size(); i++){
+		RoundResult& round_result = rounds_result[i];
+		string host = round_result.host;
+		string guest = round_result.guest;
+		string host_card = round_result.host_card;
+		string guest_card = round_result.guest_card;
+
+		cout << "round: " << i << " |host:" << host << " |guest:" << guest << " |host card:" << host_card << " |guest card:" << guest_card << endl;
+	}
 }
