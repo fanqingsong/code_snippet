@@ -13,7 +13,7 @@ bool is_prime(int num) {
 	return true;
 }
 
-int search_all_primes(int n, int *primes) {
+int search_all_primes(int n, int primes[1000]) {
 	int count = 0;
 
 	for (int i = 2; i <= n; i++ ) {
