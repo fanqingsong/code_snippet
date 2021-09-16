@@ -20,10 +20,10 @@ int get_output(int onecase[3]) {
 	}
 //	cout << diff << endl;
 
-	// there is no person between one_person and its_opposite
-	if (diff < 2) {
-		return -1;
-	}
+//	// there is no person between one_person and its_opposite
+//	if (diff < 2) {
+//		return -1;
+//	}
 
 	int max = 2 * diff;
 	if (one_person > its_opposite) {
