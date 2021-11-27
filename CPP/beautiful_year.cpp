@@ -41,7 +41,7 @@ int main() {
 	while (true) {
 		num++;
 		if (is_all_digits_distinct(num)) {
-			cout << "the beautiful year is " << num << endl;
+			cout << num << endl;
 			break;
 		}
 	}
