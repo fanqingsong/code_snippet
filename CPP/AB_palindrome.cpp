@@ -14,10 +14,10 @@ struct TestCase {
 bool is_palindrome_possible(string &str, int a, int b) {
 	int len = str.size();
 
-	if (a + b != len) {
-//		cout << "a + b != len" << endl;
-		return false;
-	}
+//	if (a + b != len) {
+////		cout << "a + b != len" << endl;
+//		return false;
+//	}
 
 	int counta = 0;
 	int countb = 0;
@@ -94,6 +94,7 @@ bool is_palindrome_possible(string &str, int a, int b) {
 					countb++;
 					countb++;
 				} else {
+					return false;
 					// do nothing
 				}
 			} else {
