@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: jenkins-service
+spec:
+  selector:
+    app: jenkins
+  ports:
+    - name: http1
+      protocol: TCP
+      port: 32766
+      targetPort: 8080
+  externalIPs:
+    - 192.168.1.3
