@@ -1,0 +1,4 @@
+Will not apply HSTS. The HSTS database must be a regular and non-world-writable file.
+ERROR: could not open HSTS store at '/root/.wget-hsts'. HSTS will be disabled.
+--2022-01-07 15:41:57--  http://192.168.65.4:32767/
+Connecting to 192.168.65.4:32767... 
