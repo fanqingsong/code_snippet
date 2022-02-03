@@ -94,4 +94,4 @@ spec:
     - name: jnlpport
       port: 50000
       targetPort: 50000
-  
+      nodePort: 32001
