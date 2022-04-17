@@ -30,6 +30,38 @@ int main() {
 	}
 
 
+	for (int i = 0; i < N; i++) {
+		string fname = family_names[i];
+		string gname = given_names[i];
+
+		bool fname_conflicted = false;
+		bool gname_conflicted = false;
+
+		for (int j = 0; j < N; j++) {
+			if (j == i) {
+				continue;
+			}
+
+			string &one_fname = family_names[j];
+			string &one_gname = given_names[j];
+
+			if (fname == one_fname || fname == one_gname) {
+				fname_conflicted = true;
+			}
+
+			if (gname == one_fname || gname == one_gname) {
+				gname_conflicted = true;
+			}
+
+			if (fname_conflicted && gname_conflicted) {
+				cout << "No" << endl;
+				return 0;
+			}
+		}
+	}
+
+	cout << "Yes" << endl;
+
 	return 0;
 }
 
