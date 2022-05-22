@@ -41,12 +41,19 @@ int main() {
 	int size = keys.size();
 	for (int i = 0; i < size; i++) {
 		int keyi = keys[i];
+		int vali = mp[keyi];
+
 		for (int j = i + 1; j < size; j++) {
 			int keyj = keys[j];
+			int valj = mp[keyj];
+
+			int valij = vali * valj;
+
 			for (int k = j + 1; k < size; k++) {
 				int keyk = keys[k];
+				int valk = mp[keyk];
 
-				sum += mp[keyi] * mp[keyj] * mp[keyk];
+				sum += valij * mp[keyk];
 			}
 		}
 	}
