@@ -44,5 +44,7 @@ int main() {
 
 	cout << ans << endl;
 
+	cout << m / ans *n << endl;
+
 	return 0;
 }
