@@ -13,29 +13,31 @@ int main() {
 
 	cin >> x >> a >> d >> n;
 
-	x += 1e18;
-	a += 1e18;
-
-	long long min = 0;
-	long long max = 2e18;
+	long long min = -1e18;
+	long long max = 1e18;
 
 	if (d == 0) {
 		cout << abs(x - a) << endl;
 	} else if (d > 0) {
-		long long max_times = (max - a) / d;
-		long long end = -1;
-		if (max_times >= n) {
-			end = a + n * d;
+		long long max_times = abs(max - a) / d;
+//		cout << "max times = " << max_times << endl;
+		long long end = a;
+//		cout << n << endl;
+		if (max_times >= n - 1) {
+//			cout << "great condition" << endl;
+			end = a + (n - 1) * d;
 		} else {
+//			cout << "less condition" << endl;
 			end = a + max_times * d;
 		}
+//		cout << "end = " << end << endl;
 
 		if (x <= a) {
-			cout << a - x << endl;
+			cout << abs(a - x) << endl;
 		} else if (x >= end) {
-			cout << x - end << endl;
+			cout << abs(x - end) << endl;
 		} else {
-			long long inc = x - a;
+			long long inc = abs(x - a);
 			long long quotient = inc % d;
 
 			if (quotient <= d / 2) {
@@ -46,17 +48,17 @@ int main() {
 		}
 	} else if (d < 0) {
 		long long max_times = abs(min - a) / abs(d);
-		long long end = -1;
-		if (max_times >= n) {
-			end = a + n * d;
+		long long end = a;
+		if (max_times >= n - 1) {
+			end = a + (n - 1) * d;
 		} else {
 			end = a + max_times * d;
 		}
 
 		if (x >= a) {
-			cout << x - a << endl;
+			cout << abs(x - a) << endl;
 		} else if (x <= end) {
-			cout << end - x << endl;
+			cout << abs(end - x) << endl;
 		} else {
 			long long inc = abs(x - a);
 			long long quotient = inc % abs(d);
