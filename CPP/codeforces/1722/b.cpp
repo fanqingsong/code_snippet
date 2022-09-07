@@ -156,62 +156,46 @@ void Graph::DFS(int v)
 /******************************** GRAPH END ***************************************/
 
 /*
-https://atcoder.jp/contests/abc262/tasks/abc262_b
+https://atcoder.jp/contests/abc259/tasks/abc259_d
 */
-
-int n, m;
-map<int, set<int>> uv;
 
 int main()
 {
-	cin >> n >> m;
+    int case_num;
 
-	REP(i, m){
-		int u, v;
-		cin >> u >> v;
-		
-		uv[u].insert(v);
-		uv[v].insert(u);
-	}
+    cin >> case_num;
+    for(int i=0; i<case_num; i++){
+    	int len;
+    	string first, second;
+		cin >> len;
+		cin >> first;
+		cin >> second;
 
-	int count = 0;
-	
+		bool same = true;
+		for(int j=0; j<len; j++){
+			char fc = first[j];
+			char sc = second[j];
 
-	map<int, set<int>>::iterator it;
-	for(it=uv.begin(); it!=uv.end(); ++it){
-		int u = it->first;
-		set<int> v = it->second;
-		
-		if (v.size() == 0){
-   			continue;
-		}
-		
-		set<int>::iterator it2;
-		for(it2=v.begin(); it2!=v.end(); it2++){
-			int one_v = *it2;
-			set<int> next = uv[one_v];
-			
-			if(next.size() == 0){
+			if (fc == sc){
 				continue;
 			}
-			
-			set<int>::iterator it3;
-			for(it3=next.begin(); it3!=next.end(); it3++){
-				int one_next = *it3;
-				
-				if(one_next == u){
-					continue;
-				}
-				
-				if (uv[one_next].count(u) == 1){
-//					cout << " u=" << u << " v=" << one_v << " next=" << one_next << endl;
-					count++;
-				}
+
+			if (fc == 'G' && sc == 'B'
+				|| fc == 'B' && sc == 'G')
+			{
+				continue;
 			}
+
+			same = false;
+			break;
+		}
+
+		if (same == true){
+			cout << "YES" << endl;
+		} else {
+			cout << "NO" << endl;
 		}
 	}
-
-	cout << count / 6 << endl;
 
     return 0;
 }

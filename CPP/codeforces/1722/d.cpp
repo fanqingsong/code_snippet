@@ -156,62 +156,82 @@ void Graph::DFS(int v)
 /******************************** GRAPH END ***************************************/
 
 /*
-https://atcoder.jp/contests/abc262/tasks/abc262_b
+https://atcoder.jp/contests/abc261/tasks/abc261_c
 */
 
-int n, m;
-map<int, set<int>> uv;
+int n;
+
+class NODE{
+	public:
+	int count;
+	int rcount;
+	char direction;
+	int index;
+};
+
+bool compare_node(NODE f, NODE s)
+{
+	return f.count < s.count;
+}
 
 int main()
 {
-	cin >> n >> m;
+	cin >> n;
 
-	REP(i, m){
-		int u, v;
-		cin >> u >> v;
+	REP(i, n){
+		int len;
+		string temp;
 		
-		uv[u].insert(v);
-		uv[v].insert(u);
-	}
+		cin >> len;
+		cin >> temp;
 
-	int count = 0;
-	
-
-	map<int, set<int>>::iterator it;
-	for(it=uv.begin(); it!=uv.end(); ++it){
-		int u = it->first;
-		set<int> v = it->second;
-		
-		if (v.size() == 0){
-   			continue;
+		vector<NODE> nodes;
+		long long sum = 0;
+		REP(j, len){
+			NODE one;
+			
+			one.index = j;
+			
+			char direction = temp[j];
+			one.direction = direction;
+			
+			int count = 0;
+			int rcount = 0;
+			if (direction == 'L'){
+				count = j - 0;
+				rcount = len - 1 - j;
+			} else if(direction == 'R'){
+				count = len - 1 - j;
+				rcount = j - 0;
+			}
+			sum += count;
+			one.count = count;
+			one.rcount = rcount;
+			
+			nodes.push_back(one);
 		}
 		
-		set<int>::iterator it2;
-		for(it2=v.begin(); it2!=v.end(); it2++){
-			int one_v = *it2;
-			set<int> next = uv[one_v];
+		sort(nodes.begin(), nodes.end(), compare_node);
+		
+//		cout << "after sort" << endl;
+		vector<NODE>::iterator it;
+		for(it = nodes.begin(); it!=nodes.end(); it++){
+			NODE one = *it;
+//			cout << "one.count = " << one.count << endl;
+			int count = one.count;
+			int rcount = one.rcount;
 			
-			if(next.size() == 0){
-				continue;
+			int inc = 0;
+			if (rcount > count){
+				inc = rcount - count;
 			}
+			sum += inc;
 			
-			set<int>::iterator it3;
-			for(it3=next.begin(); it3!=next.end(); it3++){
-				int one_next = *it3;
-				
-				if(one_next == u){
-					continue;
-				}
-				
-				if (uv[one_next].count(u) == 1){
-//					cout << " u=" << u << " v=" << one_v << " next=" << one_next << endl;
-					count++;
-				}
-			}
+			cout << sum << " ";
 		}
+		
+		cout << endl;
 	}
-
-	cout << count / 6 << endl;
 
     return 0;
 }
