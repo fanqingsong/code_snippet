@@ -1,4 +1,4 @@
-#include <iomanip>
+
 #include <bits/stdc++.h>
 #include <iostream>
 using namespace std;
@@ -124,13 +124,14 @@ class Graph {
 public:
     map<int, bool> visited;
     map<int, list<int> > adj;
+    list<int> path;
 
     // function to add an edge to graph
     void addEdge(int v, int w);
 
     // DFS traversal of the vertices
-    // reachable from v
-    void DFS(int v);
+    // reachable from v to w
+    void DFS(int v, int w);
 };
 
 void Graph::addEdge(int v, int w)
@@ -138,7 +139,7 @@ void Graph::addEdge(int v, int w)
     adj[v].push_back(w); // Add w to v¡¯s list.
 }
 
-void Graph::DFS(int v)
+void Graph::DFS(int v, int w)
 {
     // Mark the current node as visited and
     // print it
@@ -159,9 +160,18 @@ void Graph::DFS(int v)
 https://atcoder.jp/contests/abc259/tasks/abc259_d
 */
 
+map<int, int> paths;
+int n, x, y;
+
 int main()
 {
-
+	cin >> n >> x >> y;
+	for(int i=0; i<n-1; i++){
+		cin >> u >> v;
+		paths[u] = v;
+	}
+	
+	
     return 0;
 }
 

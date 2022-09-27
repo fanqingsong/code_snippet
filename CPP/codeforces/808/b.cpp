@@ -159,8 +159,33 @@ void Graph::DFS(int v)
 https://atcoder.jp/contests/abc259/tasks/abc259_d
 */
 
+int n, k;
+long long sum = 0;
+
 int main()
 {
+	cin >> n >> k;
+
+	int group_num = n - k + 1;
+	int times = 0;
+	int a;
+	
+	for(int i=1; i<=n; i++){
+		cin >> a;
+		
+		if (i < min(k, n-k+1)){
+			times = i;
+		} else if (i > max(n-k+1, k)){
+			times = n - i + 1;
+		} else {
+			times = min(k, n-k+1);
+		}
+		
+		sum += (long long)times * a;
+	}
+
+	cout << setprecision(15) <<endl;
+	cout << (double)sum / group_num << endl;
 
     return 0;
 }

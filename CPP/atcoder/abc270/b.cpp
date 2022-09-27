@@ -1,4 +1,4 @@
-#include <iomanip>
+
 #include <bits/stdc++.h>
 #include <iostream>
 using namespace std;
@@ -161,6 +161,36 @@ https://atcoder.jp/contests/abc259/tasks/abc259_d
 
 int main()
 {
+	int x, y, z;
+
+	cin >> x >> y >> z;
+
+	if (x == 0){
+		cout << 0 << endl;
+	} else if (x<0 && y>0 || x>0 && y<0){
+		cout << abs(x) << endl;
+	} else if (x<0 && y<0 || x>0 && y>0){
+//		cout << "x=" << x << " y=" << y << " z="<<z<<endl;
+		if (abs(x) < abs(y)){
+			cout << abs(x) << endl;
+		} else {
+			if (y > 0 && z <=y) {
+				if (z<0){
+					cout << x+2*abs(z) << endl;
+				} else {
+					cout << x << endl;
+				}
+			} else if (y<0 && z>=y){
+				if (z>0){
+					cout << abs(x) + 2*z << endl;
+				} else{
+					cout << abs(x) << endl;
+				}
+			} else {
+				cout << -1 << endl;
+			}
+		}
+	}
 
     return 0;
 }
