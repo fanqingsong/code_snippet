@@ -171,7 +171,7 @@ bool Graph::DFS(int v, int w)
 			}
 		}
 	}
-	
+
 	return false;
 }
 
@@ -181,31 +181,41 @@ bool Graph::DFS(int v, int w)
 https://atcoder.jp/contests/abc259/tasks/abc259_d
 */
 
-
-int n, x, y;
-int u, v;
-class Graph tree;
+int n, q;
+vector<vector<int>> ca;
 
 int main()
 {
-	cin >> n >> x >> y;
-	for(int i=0; i<n-1; i++){
-		cin >> u >> v;
-		tree.addEdge(u, v);
-	}
-	
-	bool ret = tree.DFS(x, y);
-//	cout << "ret = " << ret << endl;
-	
-	if (ret){
-		deque<int> path = tree.path;
-		while(!path.empty()){
-			int first = path.front();
-			path.pop_front();
-			cout << first << " ";
+	cin >> n >> q;
+	for(int i=0; i<n; i++){
+		int l;
+		cin >> l;
+		
+		vector<int> temp;
+
+		for(int j=0; j<l; j++){
+			int a;
+			cin >> a;
+			temp.push_back(a);
 		}
-	} else {
-		cout << -1 << endl;
+
+		ca.push_back(temp);
+	}
+
+    // Displaying the 2D vector
+//    for (int i = 0; i < ca.size(); i++) {
+//        for (int j = 0; j < ca[i].size(); j++)
+//            cout << ca[i][j] << " ";
+//        cout << endl;
+//    }
+
+	for(int k=0; k<q; k++){
+		int s, t;
+		cin >> s >> t;
+//		cout << "s = " << s << endl;
+//		cout << ca[1].front() << endl;
+
+		cout << ca[s-1][t-1] << endl;
 	}
 
     return 0;

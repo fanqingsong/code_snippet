@@ -171,7 +171,7 @@ bool Graph::DFS(int v, int w)
 			}
 		}
 	}
-	
+
 	return false;
 }
 
@@ -181,32 +181,37 @@ bool Graph::DFS(int v, int w)
 https://atcoder.jp/contests/abc259/tasks/abc259_d
 */
 
-
-int n, x, y;
-int u, v;
-class Graph tree;
+int n;
+map<int, char> ctable = {
+	{0, '0'},
+	{1, '1'},
+	{2, '2'},
+	{3, '3'},
+	{4, '4'},
+	{5, '5'},
+	{6, '6'},
+	{7, '7'},
+	{8, '8'},
+	{9, '9'},
+	{10, 'A'},
+	{11, 'B'},
+	{12, 'C'},
+	{13, 'D'},
+	{14, 'E'},
+	{15, 'F'},
+};
 
 int main()
 {
-	cin >> n >> x >> y;
-	for(int i=0; i<n-1; i++){
-		cin >> u >> v;
-		tree.addEdge(u, v);
-	}
-	
-	bool ret = tree.DFS(x, y);
-//	cout << "ret = " << ret << endl;
-	
-	if (ret){
-		deque<int> path = tree.path;
-		while(!path.empty()){
-			int first = path.front();
-			path.pop_front();
-			cout << first << " ";
-		}
-	} else {
-		cout << -1 << endl;
-	}
+	cin >> n;
+
+	int first = n / 16;
+	int second = n % 16;
+
+	char fc = ctable[first];
+	char sc = ctable[second];
+
+	cout << fc << sc << endl;
 
     return 0;
 }

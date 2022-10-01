@@ -171,7 +171,7 @@ bool Graph::DFS(int v, int w)
 			}
 		}
 	}
-	
+
 	return false;
 }
 
@@ -181,35 +181,66 @@ bool Graph::DFS(int v, int w)
 https://atcoder.jp/contests/abc259/tasks/abc259_d
 */
 
-
-int n, x, y;
-int u, v;
-class Graph tree;
+int n;
+int buff = 0;
+map<int, bool> a;
 
 int main()
 {
-	cin >> n >> x >> y;
-	for(int i=0; i<n-1; i++){
-		cin >> u >> v;
-		tree.addEdge(u, v);
-	}
-	
-	bool ret = tree.DFS(x, y);
-//	cout << "ret = " << ret << endl;
-	
-	if (ret){
-		deque<int> path = tree.path;
-		while(!path.empty()){
-			int first = path.front();
-			path.pop_front();
-			cout << first << " ";
+	cin >> n;
+	for(int i=0; i<n; i++){
+		int tmp;
+		cin >> tmp;
+
+		if(a[tmp] == true){
+			buff++;
+		} else {
+			a[tmp] = true;
 		}
-	} else {
-		cout << -1 << endl;
 	}
+
+	int it = 1;
+	while(true){
+		if (a[it] == true ){
+			it++;
+			continue;
+		}
+		
+		if (buff >= 2){
+			buff--;
+			buff--;
+			a[it] = true;
+			it++;
+
+			continue;
+		}
+		
+		map<int, bool>::reverse_iterator itr=a.rbegin();
+		int index = itr->first;
+		if (index <= it){
+			break;
+		}
+
+		map<int, bool>::reverse_iterator itr2 = ++itr;
+		int index2 = itr2->first;
+		if (index2 <= it){
+			break;
+		}
+
+//			cout << "index = " << index << endl;
+//			cout << "index2 = " << index2 << endl;
+		a.erase(index);
+		a.erase(index2);
+		a[it] = true;
+		it++;
+		continue;
+	}
+
+	cout << it - 1 << endl;
 
     return 0;
 }
+
 
 
 

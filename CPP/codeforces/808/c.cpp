@@ -124,7 +124,7 @@ class Graph {
 public:
     map<int, bool> visited;
     map<int, list<int> > adj;
-    deque<int> path;
+    stack<int> path;
 
     // function to add an edge to graph
     void addEdge(int v, int w);
@@ -137,7 +137,6 @@ public:
 void Graph::addEdge(int v, int w)
 {
     adj[v].push_back(w); // Add w to v¡¯s list.
-    adj[w].push_back(v);
 }
 
 bool Graph::DFS(int v, int w)
@@ -145,34 +144,30 @@ bool Graph::DFS(int v, int w)
     // Mark the current node as visited and
     // print it
     visited[v] = true;
-    path.push_back(v);
-//    cout << v << " ";
+    path.push(v);
+    cout << v << " ";
 
 	if (w == v){
-//		cout << "found" << endl;
+		cout << "found" << endl;
 		return true;
 	}
 
     // Recur for all the vertices adjacent
     // to this vertex
-//    cout << "before for..." << endl;
-    list<int>::iterator it;
-    for (it = adj[v].begin(); it != adj[v].end(); it++)
+    list<int>::iterator i;
+    for (i = adj[v].begin(); i != adj[v].end(); ++i)
     {
-		int next = *it;
-//		cout << "next=" << next << endl;
+		int next = *i;
 
         if (!visited[next]){
             bool found = DFS(next, w);
             if (found == true){
             	return true;
 			} else {
-				path.pop_back();
+				path.pop();
 			}
 		}
 	}
-	
-	return false;
 }
 
 /******************************** GRAPH END ***************************************/
@@ -182,28 +177,30 @@ https://atcoder.jp/contests/abc259/tasks/abc259_d
 */
 
 
-int n, x, y;
-int u, v;
-class Graph tree;
+int n, w;
+vector<int> a;
+vector<int> b;
 
 int main()
 {
-	cin >> n >> x >> y;
-	for(int i=0; i<n-1; i++){
-		cin >> u >> v;
-		tree.addEdge(u, v);
+	cin >> n >> w;
+	
+	for(int i=0; i<n; i++){
+		int temp;
+		cin >> temp;
+		a.push_back(temp);
 	}
-	
-	bool ret = tree.DFS(x, y);
-//	cout << "ret = " << ret << endl;
-	
-	if (ret){
-		deque<int> path = tree.path;
-		while(!path.empty()){
-			int first = path.front();
-			path.pop_front();
-			cout << first << " ";
-		}
+
+	sort(a.begin(), a.end());
+
+	vector<int>::iterator i;
+	for(i=a.begin(); i!=a.end(); i++){
+		cout << *i << endl;
+	}
+
+	bool ret = dfs(0, w);
+	if (ret == true){
+		//
 	} else {
 		cout << -1 << endl;
 	}
