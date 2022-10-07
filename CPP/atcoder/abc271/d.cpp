@@ -180,80 +180,50 @@ bool Graph::DFS(int v, int w)
 /*
 https://atcoder.jp/contests/abc259/tasks/abc259_d
 */
+bool f[101][10000];
 
-int n;
-int buff = 0;
-map<int, bool> a;
 
-int main()
-{
-	cin >> n;
-	for(int i=0; i<n; i++){
-		int tmp;
-		cin >> tmp;
+int main(){
+	int n,m,a[101],b[101];
+	cin>>n>>m;
 
-		if(a[tmp] == true){
-			buff++;
-		} else {
-			a[tmp] = true;
+	f[0][0]=1;
+	for(int i=1;i<=n;i++){
+		cin>>a[i]>>b[i];
+		for(int j=0;j<=m;j++){
+			if(j>=a[i])f[i][j]|=f[i-1][j-a[i]];
+			if(j>=b[i])f[i][j]|=f[i-1][j-b[i]];
 		}
 	}
-
-	int it = 1;
-	while(true){
-		if (a[it] == true ){
-			it++;
-			continue;
+	if(f[n][m]==1){
+		cout<<"Yes"<<endl;
+		int cur=m;
+		string s="";
+		
+		for(int i=n;i>0;i--){
+			cout << "i=" << i << endl;
+			
+			if(cur>=a[i]&&f[i-1][cur-a[i]]==1){
+				cur-=a[i];
+				s+='H';
+				cout << s << endl;
+			} else if(cur>=b[i]&&f[i-1][cur-b[i]]==1){
+				cur-=b[i];
+				s+='T';
+				cout << s << endl;
+			} else {
+				cout << "else" << endl;
+			}
 		}
 		
-		if (buff >= 2){
-			buff--;
-			buff--;
-			a[it] = true;
-			it++;
-
-			continue;
-		} else if (buff == 1) {
-			map<int, bool>::reverse_iterator itr=a.rbegin();
-			int index = itr->first;
-			if (index <= it){
-				break;
-			}
-
-			buff--;
-
-			a.erase(index);
-			a[it] = true;
-			it++;
-			continue;
-		} else {
-			map<int, bool>::reverse_iterator itr=a.rbegin();
-			int index = itr->first;
-			if (index <= it){
-				break;
-			}
-
-			map<int, bool>::reverse_iterator itr2 = ++itr;
-			int index2 = itr2->first;
-			if (index2 <= it){
-				break;
-			}
-
-	//			cout << "index = " << index << endl;
-	//			cout << "index2 = " << index2 << endl;
-			a.erase(index);
-			a.erase(index2);
-			a[it] = true;
-			it++;
-			continue;
-		}
+		cout << s << endl;
+		
+		reverse(s.begin(),s.end());
+		cout<<s<<endl;
+	}else{
+		cout<<"No"<<endl;
 	}
-
-	cout << it - 1 << endl;
-
-    return 0;
 }
-
 
 
 

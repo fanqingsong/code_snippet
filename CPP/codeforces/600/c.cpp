@@ -1,4 +1,4 @@
-
+#include <iomanip>
 #include <bits/stdc++.h>
 #include <iostream>
 using namespace std;
@@ -124,55 +124,33 @@ class Graph {
 public:
     map<int, bool> visited;
     map<int, list<int> > adj;
-    deque<int> path;
 
     // function to add an edge to graph
     void addEdge(int v, int w);
 
     // DFS traversal of the vertices
-    // reachable from v to w
-    bool DFS(int v, int w);
+    // reachable from v
+    void DFS(int v);
 };
 
 void Graph::addEdge(int v, int w)
 {
     adj[v].push_back(w); // Add w to v¡¯s list.
-    adj[w].push_back(v);
 }
 
-bool Graph::DFS(int v, int w)
+void Graph::DFS(int v)
 {
     // Mark the current node as visited and
     // print it
     visited[v] = true;
-    path.push_back(v);
-//    cout << v << " ";
-
-	if (w == v){
-//		cout << "found" << endl;
-		return true;
-	}
+    cout << v << " ";
 
     // Recur for all the vertices adjacent
     // to this vertex
-//    cout << "before for..." << endl;
-    list<int>::iterator it;
-    for (it = adj[v].begin(); it != adj[v].end(); it++)
-    {
-		int next = *it;
-//		cout << "next=" << next << endl;
-
-        if (!visited[next]){
-            bool found = DFS(next, w);
-            if (found == true){
-            	return true;
-			} else {
-				path.pop_back();
-			}
-		}
-	}
-
-	return false;
+    list<int>::iterator i;
+    for (i = adj[v].begin(); i != adj[v].end(); ++i)
+        if (!visited[*i])
+            DFS(*i);
 }
 
 /******************************** GRAPH END ***************************************/
@@ -181,79 +159,54 @@ bool Graph::DFS(int v, int w)
 https://atcoder.jp/contests/abc259/tasks/abc259_d
 */
 
-int n;
-int buff = 0;
-map<int, bool> a;
+string s;
+map<char, int> mp;
 
 int main()
 {
-	cin >> n;
-	for(int i=0; i<n; i++){
-		int tmp;
-		cin >> tmp;
+	cin >> s;
+	
+	for(int i=0; i<s.size(); i++){
+		mp[s[i]] ++;
+	}
 
-		if(a[tmp] == true){
-			buff++;
+	int begin, end;
+	begin = 'a';
+	end = 'z';
+	while (true){
+		bool first = false;
+		while(begin <= end){
+			if (mp[begin] % 2 == 1){
+				first = true;
+				break;
+			}
+			
+			begin++;
+		}
+
+		bool second = false;
+		while(end >= begin){
+			if (mp[end] % 2 == 1){
+				second = true;
+				break;
+			}
+			
+			end--;
+		}
+
+		if (first && second && begin < end){
+			mp[begin]++;
+			mp[end]--;
+			continue;
 		} else {
-			a[tmp] = true;
+			break;
 		}
 	}
 
-	int it = 1;
-	while(true){
-		if (a[it] == true ){
-			it++;
-			continue;
-		}
-		
-		if (buff >= 2){
-			buff--;
-			buff--;
-			a[it] = true;
-			it++;
-
-			continue;
-		} else if (buff == 1) {
-			map<int, bool>::reverse_iterator itr=a.rbegin();
-			int index = itr->first;
-			if (index <= it){
-				break;
-			}
-
-			buff--;
-
-			a.erase(index);
-			a[it] = true;
-			it++;
-			continue;
-		} else {
-			map<int, bool>::reverse_iterator itr=a.rbegin();
-			int index = itr->first;
-			if (index <= it){
-				break;
-			}
-
-			map<int, bool>::reverse_iterator itr2 = ++itr;
-			int index2 = itr2->first;
-			if (index2 <= it){
-				break;
-			}
-
-	//			cout << "index = " << index << endl;
-	//			cout << "index2 = " << index2 << endl;
-			a.erase(index);
-			a.erase(index2);
-			a[it] = true;
-			it++;
-			continue;
-		}
-	}
-
-	cout << it - 1 << endl;
+	for(char )
 
     return 0;
 }
-
 
 
 
