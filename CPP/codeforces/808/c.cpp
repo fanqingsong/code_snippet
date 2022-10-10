@@ -176,10 +176,39 @@ bool Graph::DFS(int v, int w)
 https://atcoder.jp/contests/abc259/tasks/abc259_d
 */
 
+class NODE{
+public:
+	int v;
+	int i;
+		
+	NODE(int _v, int _i){
+		v = _v;
+		i = _i;
+	}
+};
 
 int n, w;
-vector<int> a;
-vector<int> b;
+
+vector<NODE> a;
+vector<NODE> used;
+vector<int> lefta;
+
+bool cmp(NODE a, NODE b){
+	if (a.v > b.v){
+		return true;
+	}
+	
+	return false;
+}
+
+
+bool cmpi(NODE a, NODE b){
+	if (a.i < b.i){
+		return true;
+	}
+
+	return false;
+}
 
 int main()
 {
@@ -188,21 +217,64 @@ int main()
 	for(int i=0; i<n; i++){
 		int temp;
 		cin >> temp;
-		a.push_back(temp);
+		
+		NODE one(temp, i);
+		a.push_back(one);
 	}
 
-	sort(a.begin(), a.end());
+	sort(a.begin(), a.end(), cmp);
 
-	vector<int>::iterator i;
-	for(i=a.begin(); i!=a.end(); i++){
-		cout << *i << endl;
+//	for(int i=0; i<n; i++){
+//		NODE one = a[i];
+//		cout << one.v << endl;
+//		cout << one.i << endl;
+//	}
+
+	int halfsum = 0;
+	for(int i=0; i<n; i++){
+		int one_av = a[i].v;
+		int one_ai = a[i].i;
+		
+//		cout << "one_av=" << one_av << endl;
+//		cout << "one_ai=" << one_ai << endl;
+		
+		int half = 0;
+		if (one_av % 2 == 0){
+			half = one_av / 2;
+		} else {
+			half = one_av / 2 + 1;
+		}
+
+		NODE one_used(half, one_ai);
+		used.push_back(one_used);
+		
+		halfsum += half;
+		lefta.push_back(one_av - half);
 	}
 
-	bool ret = dfs(0, w);
-	if (ret == true){
-		//
-	} else {
+//	cout << halfsum << endl;
+
+	if (halfsum > w){
 		cout << -1 << endl;
+		return 0;
+	}
+
+	int leftw = w - halfsum;
+	for(int i=0; i<n; i++){
+		if (leftw >= lefta[i]){
+			leftw -= lefta[i];
+			used[i].v = a[i].v;
+		} else {
+			used[i].v += leftw;
+			leftw = 0;
+			break;
+		}
+	}
+
+	sort(used.begin(), used.end(), cmpi);
+
+	for(int i=0; i<n; i++){
+		cout << used[i].v << " ";
 	}
 
     return 0;
