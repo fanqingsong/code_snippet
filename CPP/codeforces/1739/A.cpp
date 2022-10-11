@@ -161,11 +161,58 @@ https://atcoder.jp/contests/abc259/tasks/abc259_d
 
 int t;
 
+vector<pair<int, int>> dirs {
+	{2, 1},
+	{1, 2},
+	{2, -1},
+	{1, -2},
+	{-1, 2},
+	{-2, 1},
+	{-2, -1},
+	{-1, -2},
+};
+
+bool canjump(int r, int w, int m, int n){
+	for(int i=0; i<dirs.size(); i++){
+		pair<int, int> one = dirs[i];
+		int xd = one.first;
+		int yd = one.second;
+		int x = m + xd;
+		int y = n + yd;
+		if (x>=1 && x<=r && y>=1 && y<=w){
+			return true;
+		}
+	}
+	
+	return false;
+}
+
 int main()
 {
 	cin >> t;
 
-	//
+	for(int i=0; i<t; i++){
+		int r, w;
+		cin >> r >> w;
+
+		bool first = false;
+		for(int m=1; m<=r; m++){
+			for(int n=1; n<=w; n++){
+				if (!canjump(r,w,m,n)){
+					cout << m << " " << n << endl;
+					first = true;
+					break;
+				}
+			}
+			if (first == true){
+				break;
+			}
+		}
+		
+		if (first == false){
+			cout << r << " " << w << endl;
+		}
+	}
 	
     return 0;
 }
