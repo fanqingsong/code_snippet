@@ -223,9 +223,9 @@ int main()
 //		for(it=one.begin(); it!=one.end(); it++){
 //			next = it;
 //			next++;
-////			
+////
 ////			cout << "it = " << *it << endl;
-//			
+//
 //			if (next == one.end()){
 //				cout << *it + 1 << endl;
 //				break;

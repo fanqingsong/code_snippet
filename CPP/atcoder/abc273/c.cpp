@@ -159,9 +159,40 @@ void Graph::DFS(int v)
 https://atcoder.jp/contests/abc259/tasks/abc259_d
 */
 
+const int N = 200005;
+int n;
+int a[N];
+map<int, int> counter;
+map<int, int> gt_index;
+set<int> gtnums;
+
 int main()
 {
-
+	cin >> n;
+	for(int i=1; i<=n; i++){
+		cin >> a[i];
+		counter[a[i]] ++;
+	}
+	
+	map<int, int>::iterator it;
+	int total = counter.size();
+	int index = 0;
+	for(it=counter.begin(); it!=counter.end(); it++){
+		int curnum = it->first;
+		index++;
+		gt_index[total - index] = curnum;
+		gtnums.insert(total - index);
+	}
+	
+	for(int i=0; i<n; i++){
+		if (gtnums.count(i) == 0){
+			cout << 0 << endl;
+		} else {
+			int num = gt_index[i];
+			cout << counter[num] << endl;
+		}
+	}
+	
     return 0;
 }
 
