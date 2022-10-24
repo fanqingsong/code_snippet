@@ -156,11 +156,56 @@ void Graph::DFS(int v)
 /******************************** GRAPH END ***************************************/
 
 /*
-https://atcoder.jp/contests/abcxxx/tasks/abcxxx_d
+https://atcoder.jp/contests/abc229/tasks/abc229_d
 */
+
+string s;
+int k;
+int acc[20005];
 
 int main()
 {
+	cin >> s;
+	cin >> k;
+
+	memset(acc, 0, sizeof(acc));
+
+	int size = s.size();
+	for(int i=0; i<size; i++){
+		char one = s[i];
+		
+		int nav = i+1;
+		if (one == '.'){
+			acc[nav] = acc[nav-1] + 1;
+		} else {
+			acc[nav] = acc[nav-1];
+		}
+	}
+
+	int maxlen = 0;
+	int i=1, j=1;
+	while(true){
+		while(acc[j]-acc[i-1]<=k){
+			j++;
+			if (j>size){
+				break;
+			}
+		}
+		
+		// back to last element X,
+		// from i to it (inclusively) k operation done.
+		j--;
+		
+		maxlen = max(maxlen, j-i+1);
+		
+		i++;
+		
+		if (i > size){
+			break;
+		}
+	}
+
+	cout << maxlen << endl;
 
     return 0;
 }
