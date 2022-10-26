@@ -161,18 +161,211 @@ https://atcoder.jp/contests/abc259/tasks/abc259_d
 
 int h,w;
 int rs, cs;
-int n;
-vector<vector<int>> xdirs;
-vector<vector<int>> ydirs;
+int n, q;
+map<int, vector<int>> xblocks;
+map<int, vector<int>> yblocks;
 
 int main()
 {
 	cin >> h >> w;
-	cin >> rs >> rs;
+	cin >> rs >> cs;
 	cin >> n;
 	
+	/*
+		store x-direction blocks, i.e. ci
+		store y-direction blocks, i.e. ri
+	*/
 	for(int i=0; i<n; i++){
+		int ri, ci;
+		cin >> ri >> ci;
+		vector<int>& tempx = xblocks[ri];
+		tempx.push_back(ci);
 		
+		vector<int>& tempy = yblocks[ci];
+		tempy.push_back(ri);
+	}
+
+	/*
+	sort all blocks of each x-directions
+	*/
+	map<int, vector<int>>::iterator it;
+	for(it=xblocks.begin(); it!=xblocks.end(); it++){
+		vector<int>& block_list = it->second;
+		
+		sort(block_list.begin(), block_list.end());
+	}
+
+	/*
+	sort all blocks of each y-directions
+	*/
+	for(it=yblocks.begin(); it!=yblocks.end(); it++){
+		vector<int>& block_list = it->second;
+
+		sort(block_list.begin(), block_list.end());
+	}
+
+	cin >> q;
+	// ri ci are position where T is moving
+	int ri = rs;
+	int ci = cs;
+	for(int i=0; i<q; i++){
+		string di;
+		int li;
+		cin >> di >> li;
+		
+		// horizontal blocks
+		vector<int>& hb = xblocks[ri];
+
+		// vertical blocks
+		vector<int>& vb = yblocks[ci];
+
+		vector<int>::iterator low, up;
+		
+		if (di == "L"){
+			// no block in that row
+			if(hb.size() == 0){
+//				cout << "ci = " << ci << endl;
+//				cout << "li = " << li << endl;
+				int pos = ci - li;
+				ci = pos>0?pos:1;
+				cout << ri << " " << ci << endl;
+				continue;
+			}
+			
+			int first = hb[0];
+			int last = hb[hb.size()-1];
+			if (ci < first){
+				int pos = ci - li;
+				ci = pos>0?pos:1;
+				cout << ri << " " << ci << endl;
+				continue;
+			}
+			
+			if (ci > last){
+				int pos = ci - li;
+				ci = pos>last?pos:(last+1);
+
+				cout << ri << " " << ci << endl;
+				continue;
+			}
+			
+			up = upper_bound(hb.begin(), hb.end(), ci);
+			int upindex = up - hb.begin();
+			int base = hb[upindex-1];
+			int pos = ci - li;
+			ci = pos>base?pos:(base+1);
+			
+			cout << ri << " " << ci << endl;
+		} else if (di == "R") {
+			// no block in that row
+			if(hb.size() == 0){
+				int pos = ci + li;
+				ci = pos<=w?pos:w;
+				cout << ri << " " << ci << endl;
+				continue;
+			}
+
+			int first = hb[0];
+			int last = hb[hb.size()-1];
+			if (ci < first){
+				int pos = ci + li;
+				ci = pos<first?pos:(first-1);
+
+				cout << ri << " " << ci << endl;
+				continue;
+			}
+
+			if (ci > last){
+				int pos = ci + li;
+				ci = pos<=w?pos:w;
+
+				cout << ri << " " << ci << endl;
+				continue;
+			}
+
+			up = upper_bound(hb.begin(), hb.end(), ci);
+			int upindex = up - hb.begin();
+			int top = hb[upindex];
+			int pos = ci + li;
+			ci = pos<top?pos:top-1;
+
+			cout << ri << " " << ci << endl;
+		} else if (di == "U") {
+			// no block in that column
+			if(vb.size() == 0){
+				int pos = ri - li;
+				ri = pos>0?pos:1;
+				cout << ri << " " << ci << endl;
+				continue;
+			}
+
+			int first = vb[0];
+			int last = vb[vb.size()-1];
+			if (ri < first){
+				int pos = ri - li;
+				ri = pos>0?pos:1;
+
+				cout << ri << " " << ci << endl;
+				continue;
+			}
+
+			if (ri > last){
+//				cout << "ri = " << ri << endl;
+//				cout << "li = " << li << endl;
+//				cout << "last = " << last << endl;
+				
+				int pos = ri - li;
+				ri = pos>last?pos:(last+1);
+
+				cout << ri << " " << ci << endl;
+				continue;
+			}
+
+			up = upper_bound(vb.begin(), vb.end(), ri);
+			int upindex = up - vb.begin();
+
+			int top = vb[upindex-1];
+			int pos = ri - li;
+			ri = pos>top?pos:(top+1);
+			
+			cout << ri << " " << ci << endl;
+		} else if (di == "D") {
+			// no block in that column
+			if(vb.size() == 0){
+				int pos = ri + li;
+				ri = pos<=h?pos:h;
+
+				cout << ri << " " << ci << endl;
+				continue;
+			}
+
+			int first = vb[0];
+			int last = vb[vb.size()-1];
+			if (ri < first){
+				int pos = ri + li;
+				ri = pos<first?pos:(first-1);
+
+				cout << ri << " " << ci << endl;
+				continue;
+			}
+
+			if (ri > last){
+				int pos = ri + li;
+				ri = pos<=h?pos:h;
+
+				cout << ri << " " << ci << endl;
+				continue;
+			}
+
+			up = upper_bound(vb.begin(), vb.end(), ri);
+			int upindex = up - vb.begin();
+
+			int top = vb[upindex];
+			int pos = ri + li;
+			ri = pos<top?pos:(top-1);
+
+			cout << ri << " " << ci << endl;
+		}
 	}
 
     return 0;

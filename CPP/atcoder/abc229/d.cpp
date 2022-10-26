@@ -161,7 +161,7 @@ https://atcoder.jp/contests/abc229/tasks/abc229_d
 
 string s;
 int k;
-int acc[20005];
+int acc[200005];
 
 int main()
 {
@@ -170,39 +170,53 @@ int main()
 
 	memset(acc, 0, sizeof(acc));
 
-	int size = s.size();
-	for(int i=0; i<size; i++){
+	int n = s.size();
+	for(int i=0; i<n; i++){
 		char one = s[i];
-		
-		int nav = i+1;
+
+		int rep = 0;
 		if (one == '.'){
-			acc[nav] = acc[nav-1] + 1;
-		} else {
-			acc[nav] = acc[nav-1];
+			rep = 1;
 		}
+
+		acc[i+1] = acc[i] + rep;
 	}
 
 	int maxlen = 0;
 	int i=1, j=1;
 	while(true){
+		if (i > n || j > n){
+			break;
+		}
+
+//      for k == 0, it is possible to be this£º
+//      i > j
+//		if (i > j){
+//			break;
+//		}
+
 		while(acc[j]-acc[i-1]<=k){
 			j++;
-			if (j>size){
+			if (j>n){
 				break;
 			}
 		}
-		
+
+		// for k == 0, and ...., j may be 1, so it is need to updated.
+		if (i > j){
+			j = i;
+			continue;
+		}
+
 		// back to last element X,
 		// from i to it (inclusively) k operation done.
 		j--;
-		
+
 		maxlen = max(maxlen, j-i+1);
-		
+
+		j++;
+
 		i++;
-		
-		if (i > size){
-			break;
-		}
 	}
 
 	cout << maxlen << endl;
