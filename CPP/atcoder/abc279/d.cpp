@@ -1,31 +1,73 @@
 #include <bits/stdc++.h>
 using namespace std;
-int main(){
-	long long a,b;
-	cin>>a>>b;
-	if(b>=a){
-		cout<<a;
-		cout<<".0000000\n";
-		return 0;
-	}
-	double c=(double)b/a;
-	double g=1.00;
-	double ret;
-	do {
-		ret = ((1/sqrt(g))-(1/sqrt(g+1.00)));
-		cout << ret << " c=" << c << endl;
-		g+=1.0;
-	} while(ret > c);
 
-	g-=1.00;
-	long long gg=(long long)g;
-	long long ans=(gg-1)*b;
-	double k=(double)a/sqrt(g);
-	int an=(int)k;
-	long long answ=an+ans;
-	k=(double)(answ%10)+k-an;
-	cout<<answ/10<<fixed<<setprecision(7)<<k<<endl;
-	return 0;
+long long a, b;
 
-
+long double get_t(long long x){
+	long double ret = 0;
+	ret = (long double)b*x + (long double)a/sqrt(x+1);
+	
+	return ret;
 }
+
+int main(){
+	cout << fixed << setprecision(10);
+	
+	cin >> a >> b;
+	
+	long long l, r;
+	l = 0;
+	r = a;
+	
+	while(l < r){
+//		cout << "---------------" << endl;
+//		cout << "l = " << l << endl;
+//		cout << "r = " << r << endl;
+		
+		long long len = r - l;
+		long long one = len / 3;
+		if (one == 0){
+			break;
+		} 
+		
+//		cout << "one = " << one << endl;
+		
+		long long mid1 = l + one;
+		long long mid2 = r - one;
+		
+//		cout << "mid1 = " << mid1 << endl;
+//		cout << "mid2 = " << mid2 << endl;
+		
+		if (mid1 >= mid2){
+			break;
+		}
+		
+		long double mid1v = get_t(mid1);
+		long double mid2v = get_t(mid2);
+
+//		cout << "mid1v = " << mid1v << endl;
+//		cout << "mid2v = " << mid2v << endl;
+
+		if(mid1v <= mid2v){
+			r = mid2;
+		} else if (mid1v > mid2v){
+			l = mid1;
+		} else {
+			
+		}
+	}
+	
+	long long mini = l;
+	long double minv = get_t(mini);
+	for(long long i=l-10; i<=r+10; i++){
+		long double cv = get_t(i);
+		if(cv < minv){
+			mini = i;
+			minv = cv;
+		}
+	}
+
+	cout << minv << endl;
+}
+
+
