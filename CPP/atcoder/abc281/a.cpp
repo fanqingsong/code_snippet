@@ -123,8 +123,7 @@ inline void OPEN(string s)
 class Graph {
 public:
     map<int, bool> visited;
-    map<int, list<int>> adj;
-	int max = 1;
+    map<int, list<int> > adj;
 
     // function to add an edge to graph
     void addEdge(int v, int w);
@@ -144,11 +143,7 @@ void Graph::DFS(int v)
     // Mark the current node as visited and
     // print it
     visited[v] = true;
-//    cout << v << " ";
-
-	if (v > max){
-		max = v;
-	}
+    cout << v << " ";
 
     // Recur for all the vertices adjacent
     // to this vertex
@@ -164,55 +159,18 @@ void Graph::DFS(int v)
 https://atcoder.jp/contests/abcxxx/tasks/abcxxx_d
 */
 
-LL k;
-map<LL, LL> counter;
+int n;
 
 int main()
 {
-	LL k;
-
-	cin >> k;
-
-	LL i;
-	LL n = k;
-	for(i=2; i*i<=k; i++){
-		while(n % i == 0){
-			n /= i;
-			counter[i]++;
-		}
+	cin >> n;
+	
+	for(int i=n; i>=0; i--){
+		cout << i << endl;
 	}
-
-	if (n!=1){
-		counter[n]++;
-	}
-
-	LL ret = 0;
-
-	map<LL, LL>::iterator it;
-	for(it=counter.begin(); it!=counter.end(); it++){
-		LL p = it->first;
-		LL q = it->second;
-		
-		LL pm = 0;
-		LL cnt = 0;
-		while(cnt < q){
-			pm += (LL)p;
-
-			LL temp = pm;
-			while(temp % p == 0){
-				cnt++;
-				temp /= p;
-			}
-		}
-		
-		ret = max(ret, pm);
-	}
-
-	cout << ret << endl;
 
     return 0;
 }
-
 
 
 

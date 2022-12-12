@@ -123,8 +123,7 @@ inline void OPEN(string s)
 class Graph {
 public:
     map<int, bool> visited;
-    map<int, list<int>> adj;
-	int max = 1;
+    map<int, list<int> > adj;
 
     // function to add an edge to graph
     void addEdge(int v, int w);
@@ -144,11 +143,7 @@ void Graph::DFS(int v)
     // Mark the current node as visited and
     // print it
     visited[v] = true;
-//    cout << v << " ";
-
-	if (v > max){
-		max = v;
-	}
+    cout << v << " ";
 
     // Recur for all the vertices adjacent
     // to this vertex
@@ -164,55 +159,99 @@ void Graph::DFS(int v)
 https://atcoder.jp/contests/abcxxx/tasks/abcxxx_d
 */
 
-LL k;
-map<LL, LL> counter;
+string s;
+
+bool is_upper(char one){
+	if(one >= 'A' && one <= 'Z'){
+		return true;
+	}
+	
+	return false;
+}
+
+bool is_digit(char one){
+	if(one >= '0' && one <= '9'){
+		return true;
+	}
+	
+	return false;
+}
 
 int main()
 {
-	LL k;
+	cin >> s;
 
-	cin >> k;
+	int i;
+	int b,e;
+	int l = s.length();
 
-	LL i;
-	LL n = k;
-	for(i=2; i*i<=k; i++){
-		while(n % i == 0){
-			n /= i;
-			counter[i]++;
+	// test head is upper
+	i = 0;
+	b = 0;
+	while(i < l){
+		char one = s[i];
+		if (is_upper(one)){
+			i++;
+			continue;
+		} else {
+			break;
 		}
 	}
+	e = i-1;
 
-	if (n!=1){
-		counter[n]++;
+	if (b != e){
+		cout << "No" << endl;
+		return 0;
 	}
 
-	LL ret = 0;
-
-	map<LL, LL>::iterator it;
-	for(it=counter.begin(); it!=counter.end(); it++){
-		LL p = it->first;
-		LL q = it->second;
-		
-		LL pm = 0;
-		LL cnt = 0;
-		while(cnt < q){
-			pm += (LL)p;
-
-			LL temp = pm;
-			while(temp % p == 0){
-				cnt++;
-				temp /= p;
-			}
+	b = i;
+	while(i < l){
+		char one = s[i];
+		if (is_digit(one)){
+			i++;
+			continue;
+		} else {
+			break;
 		}
-		
-		ret = max(ret, pm);
+	}
+	e = i-1;
+
+	if (b + 5 != e){
+		cout << "No" << endl;
+		return 0;
 	}
 
-	cout << ret << endl;
+	if(s[b] == '0'){
+		cout << "No" << endl;
+		return 0;
+	}
+
+	b = i;
+	while(i < l){
+		char one = s[i];
+		if (is_upper(one)){
+			i++;
+			continue;
+		} else {
+			break;
+		}
+	}
+	e = i-1;
+
+	if (b != e){
+		cout << "No" << endl;
+		return 0;
+	}
+
+	if (i!=l){
+		cout << "No" << endl;
+		return 0;
+	}
+
+	cout << "Yes" << endl;
 
     return 0;
 }
-
 
 
 

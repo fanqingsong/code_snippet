@@ -164,51 +164,54 @@ void Graph::DFS(int v)
 https://atcoder.jp/contests/abcxxx/tasks/abcxxx_d
 */
 
-LL k;
-map<LL, LL> counter;
+
+string os, ss;
+string osc, ssc;
+
+string out;
+string outc;
+
+int toint(char one){
+	if (one >= 'A' && one <= 'F'){
+		return one - 'A' + 10;
+	} else if (one >= '0' && one <= '9'){
+		return one - '0';
+	}
+}
+
+string& tochar(string& hex){
+	string ret;
+	
+	int l = hex.length();
+	int pl = l / 2;
+	for(int i=0; i<pl; i++){
+		char fc = hex[i*2];
+		char sc = hex[i*2 + 1];
+		
+		int fi = toint(fc);
+		int si = toint(sc);
+		
+		int result = fi * 16 + si;
+		ret.push_back(char(result));
+	}
+	
+	return ret;
+}
 
 int main()
 {
-	LL k;
+	cin >> os;
+	cin >> ss;
 
-	cin >> k;
+	string& ret = tochar(os);
+	osc.copy(ret, ret.size());
 
-	LL i;
-	LL n = k;
-	for(i=2; i*i<=k; i++){
-		while(n % i == 0){
-			n /= i;
-			counter[i]++;
-		}
-	}
+	cout << osc << endl;
 
-	if (n!=1){
-		counter[n]++;
-	}
+	ret = tochar(ss);
+	ssc.copy(ret, ret.size());
 
-	LL ret = 0;
 
-	map<LL, LL>::iterator it;
-	for(it=counter.begin(); it!=counter.end(); it++){
-		LL p = it->first;
-		LL q = it->second;
-		
-		LL pm = 0;
-		LL cnt = 0;
-		while(cnt < q){
-			pm += (LL)p;
-
-			LL temp = pm;
-			while(temp % p == 0){
-				cnt++;
-				temp /= p;
-			}
-		}
-		
-		ret = max(ret, pm);
-	}
-
-	cout << ret << endl;
 
     return 0;
 }
