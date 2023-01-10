@@ -8,7 +8,6 @@ using namespace std;
 #include <set>
 #include <map>
 #include <stack>
-#include <queue>
 
 typedef long long LL;
 typedef pair<int, int> pii;
@@ -160,8 +159,22 @@ void Graph::DFS(int v)
 https://atcoder.jp/contests/abcxxx/tasks/abcxxx_d
 */
 
+int n;
+vector<string> s;
+
 int main()
 {
+	cin >> n;
+	
+	for(int i=0; i<n; i++){
+		string temp;
+		cin >> temp;
+		s.push_back(temp);
+	}
+
+	for(int i=0; i<n; i++){
+		cout << s[n-i-1] << endl;
+	}
 
     return 0;
 }

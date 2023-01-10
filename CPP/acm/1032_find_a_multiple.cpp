@@ -160,8 +160,61 @@ void Graph::DFS(int v)
 https://atcoder.jp/contests/abcxxx/tasks/abcxxx_d
 */
 
+int n;
+int a[10005];
+int s[10005];
+
 int main()
 {
+	cin >> n;
+	
+	for(int i=1; i<=n; i++){
+		cin >> a[i];
+	}
+
+	s[1] = a[1];
+	for(int i=2; i<=n; i++){
+		s[i] = s[i-1] + a[i];
+	}
+
+	for(int i=1; i<=n; i++){
+		if(s[i] % n == 0){
+			cout << i << endl;
+			for(int j=1; j<=i; j++){
+				cout << a[j] << endl;
+			}
+			return 0;
+		}
+	}
+
+	/*
+	here means s[i] % n all not equal 0
+	so s[1] % n , ... , s[n] % n > 0
+	they are in the range of [1, n]
+	but there are n item of s[i]
+	so there must be i and j, meets
+	s[i] % n == s[j] % n
+	*/
+
+	map<int, int> flag;
+	for(int i=1; i<=n; i++){
+		int rem = s[i] % n;
+		
+		// previous index has the same remainer with i
+		int previ = flag[rem];
+		if (previ != 0){
+			int mini = min(previ, i);
+			int maxi = max(previ, i);
+			int count = maxi - mini;
+			cout << count << endl;
+			for(int j=mini+1; j<=maxi; j++){
+				cout << a[j] << endl;
+			}
+			return 0;
+		} else {
+			flag[rem] = i;
+		}
+	}
 
     return 0;
 }

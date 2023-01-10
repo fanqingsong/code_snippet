@@ -160,8 +160,55 @@ void Graph::DFS(int v)
 https://atcoder.jp/contests/abcxxx/tasks/abcxxx_d
 */
 
+int n, m;
+map<int, map<int, bool>> edges;
+
 int main()
 {
+	cin >> n >> m;
+
+	for(int i=0; i<m; i++){
+		int u, v;
+		cin >> u >> v;
+
+		edges[u][v] = true;
+		edges[v][u] = true;
+	}
+
+	int count = 0;
+	vector<bool> v(n+1, false);
+	while(true){
+		int ff = 0;
+		
+		for(int i=1; i<=n; i++){
+			if(v[i] == false){
+				ff = i;
+				count++;
+				break;
+			}
+		}
+		
+		if (ff == 0){
+			break;
+		}
+		
+		queue<int> qu;
+		qu.push(ff);
+		while(!qu.empty()){
+			int first = qu.front();
+			qu.pop();
+			if (v[first] == true){
+				continue;
+			}
+			
+			v[first] = true;
+			for(auto itr: edges[first]){
+				qu.push(itr.first);
+			}
+		}
+	}
+
+	cout << count << endl;
 
     return 0;
 }
