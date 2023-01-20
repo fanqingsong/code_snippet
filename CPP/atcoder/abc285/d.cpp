@@ -161,7 +161,9 @@ https://atcoder.jp/contests/abcxxx/tasks/abcxxx_d
 */
 
 int n;
-map<string, string> mp;
+map<string, map<string, bool>> edges;
+map<string, bool> vis;
+map<string, int> indegree;
 
 int main()
 {
@@ -170,8 +172,68 @@ int main()
 	for(int i=0; i<n; i++){
 		string s, t;
 		cin >> s >> t;
-		mp[]
+		edges[s][t] = true;
+		
+		vis[s] = false;
+		vis[t] = false;
+		
+		indegree[s] += 0;
+		indegree[t] += 1;
 	}
+
+	vector<string> snodes;
+	for(auto it: indegree){
+		string str = it.first;
+		int count = it.second;
+
+		if (count == 0){
+			snodes.push_back(str);
+		}
+	}
+
+	int sindex = 0;
+	while(true){
+		string fs;
+
+		if (sindex >= snodes.size()){
+			break;
+		}
+		
+		fs = snodes[sindex];
+//		cout << "fs=" << fs << endl;
+		sindex++;
+
+		stack<string> st;
+		st.push(fs);
+		while(!st.empty()){
+			string top = st.top();
+			st.pop();
+			
+			if (vis[top] == true){
+				cout << "No" << endl;
+				return 0;
+			} 
+			
+			vis[top] = true;
+			
+			for(auto itr: edges[top]){
+				st.push(itr.first);
+			}
+		}
+	}
+	
+	// if there is some nodes
+	// which is not visited
+	// it means cycle exists
+	for(auto it: vis){
+		bool visited = it.second;
+		if (visited == false){
+			cout << "No" << endl;
+			return 0;
+		}
+	}
+	
+	cout << "Yes" << endl;
 
     return 0;
 }
