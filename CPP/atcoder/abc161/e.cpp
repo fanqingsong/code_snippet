@@ -65,17 +65,6 @@ int diry[8] = { 0, 1, -1, 0, -1, 1, -1, 1 };
 
 /******************************** COMMON FUNC START ***************************************/
 
-LL quick_pow(LL x,LL n,LL m){
-	LL res = 1;
-	while(n > 0){
-		if(n & 1)	res = res * x % m;
-		x = x * x % m;
-		n >>= 1;//相当于n=n/2.详情请参考位移运算符。
-	}
-	
-	return res;
-}
-
 inline string IntToString(LL a)
 {
     char x[100];
@@ -135,7 +124,8 @@ inline void OPEN(string s)
 class Graph {
 public:
     map<int, bool> visited;
-    map<int, list<int> > adj;
+    map<int, set<int> > adj;
+//    vector<int> order;
 
     // function to add an edge to graph
     void addEdge(int v, int w);
@@ -147,22 +137,28 @@ public:
 
 void Graph::addEdge(int v, int w)
 {
-    adj[v].push_back(w); // Add w to v’s list.
+    adj[v].insert(w); // Add w to v’s list.
 }
 
 void Graph::DFS(int v)
 {
+//	cout << "------" << endl;
     // Mark the current node as visited and
     // print it
     visited[v] = true;
     cout << v << " ";
 
+//	order.push_back(v);
+
     // Recur for all the vertices adjacent
     // to this vertex
-    list<int>::iterator i;
+    set<int>::iterator i;
     for (i = adj[v].begin(); i != adj[v].end(); ++i)
-        if (!visited[*i])
+        if (!visited[*i]){
             DFS(*i);
+//			order.push_back(v);
+			cout << v << " ";
+		}
 }
 
 /******************************** GRAPH END ***************************************/
@@ -171,8 +167,135 @@ void Graph::DFS(int v)
 https://atcoder.jp/contests/abcxxx/tasks/abcxxx_d
 */
 
+int n, k, c;
+string s;
+
 int main()
 {
+	cin >> n >> k >> c;
+	cin >> s;
+
+	int slen = s.size();
+	vector<int> lflag(k, -1);
+	vector<int> rflag(k, -1);
+
+	// greedy working from left
+	bool tired;
+	int rest;
+	int workdays;
+	
+	tired = false;
+	rest = 0;
+	workdays = 0;
+	
+	for(int i=0; i<n; i++){
+		char one = s[i];
+		
+//		cout << "day i="<< i << " got char=" << one << endl;
+//		cout << "before action, my property, tired=" << tired << " rest="<<rest << " workdays=" << workdays <<endl;
+		
+		if (tired == false){
+			if (one == 'o') {
+				// work one day
+//				cout << "not tired, work one day." << endl;
+				
+				lflag[workdays] = i;
+				
+				workdays++;
+				if (workdays >= k){
+					break;
+				}
+				
+				tired = true;
+				rest = 0;
+			} else if (one == 'x'){
+				// can not work
+				rest++;
+			}
+		} else {
+			// worked before today, feel tired, need rest
+			/*
+			rest c days
+			rest:
+			0 --> 1
+			1 --> 2
+			...
+			c-1 --> c
+			 */
+//			cout << "feel tired, need rest" << endl;
+//			cout << "before rest = " << rest << endl;
+			// let him rest
+			rest++;
+//			cout << "after rest = " << rest << endl;
+//			
+//			cout << "c days = " << c << endl;
+			if (rest >= c){
+				tired = false;
+			}
+		}
+		
+//		cout << "after action, my property, tired=" << tired << " rest="<<rest << " workdays=" << workdays <<endl;
+//		cout << endl;
+	}
+
+//	for(int i=0; i<n; i++){
+//		cout << lflag[i];
+//	}
+//	cout << endl;
+
+	// greedy working from right
+	tired = false;
+	rest = 0;
+	workdays = 0;
+	
+	for(int i=0; i<n; i++){
+		char one = s[slen-i-1];
+
+		if (tired == false){
+			if (one == 'o') {
+				// work one day
+				rflag[k-workdays-1] = slen-i-1;
+				
+				workdays++;
+				if (workdays >= k){
+					break;
+				}
+
+				tired = true;
+				rest = 0;
+			} else if (one == 'x'){
+				// can not work
+				rest++;
+			}
+		} else {
+			// worked before today
+			/*
+			rest c days
+			rest:
+			0 --> 1
+			1 --> 2
+			...
+			c-1 --> c
+			 */
+			// let him rest
+			rest++;
+
+			if (rest >= c){
+				tired = false;
+			}
+		}
+	}
+
+//	for(int i=0; i<n; i++){
+//		cout << rflag[i];
+//	}
+//	cout << endl;
+
+	for(int i=0; i<k; i++){
+		if (lflag[i] == rflag[i]) {
+			cout << lflag[i]+1 << endl;
+		}
+	}
 
     return 0;
 }

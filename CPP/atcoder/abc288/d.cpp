@@ -65,17 +65,6 @@ int diry[8] = { 0, 1, -1, 0, -1, 1, -1, 1 };
 
 /******************************** COMMON FUNC START ***************************************/
 
-LL quick_pow(LL x,LL n,LL m){
-	LL res = 1;
-	while(n > 0){
-		if(n & 1)	res = res * x % m;
-		x = x * x % m;
-		n >>= 1;//相当于n=n/2.详情请参考位移运算符。
-	}
-	
-	return res;
-}
-
 inline string IntToString(LL a)
 {
     char x[100];
@@ -171,8 +160,31 @@ void Graph::DFS(int v)
 https://atcoder.jp/contests/abcxxx/tasks/abcxxx_d
 */
 
+long long n, k;
+set<string> s;
+
 int main()
 {
+	cin >> n >> k;
+
+	int count = 0;
+
+	for (int i=0; i<n; i++){
+		string si;
+		cin >> si;
+
+		s.insert(si);
+
+		count++;
+
+		if (count >= k){
+			break;
+		}
+	}
+
+	for (auto it : s){
+		cout << it << endl;
+	}
 
     return 0;
 }

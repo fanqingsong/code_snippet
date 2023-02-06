@@ -72,7 +72,7 @@ LL quick_pow(LL x,LL n,LL m){
 		x = x * x % m;
 		n >>= 1;//相当于n=n/2.详情请参考位移运算符。
 	}
-	
+
 	return res;
 }
 
@@ -171,8 +171,58 @@ void Graph::DFS(int v)
 https://atcoder.jp/contests/abcxxx/tasks/abcxxx_d
 */
 
+int n, m;
+map<int, int> counter;
+vector<int> edges[200000+5];
+
 int main()
 {
+	cin >> n >> m;
+
+	for(int i=0; i<m; i++){
+		int ai, bi;
+		cin >> ai >> bi;
+		
+		edges[ai].push_back(bi);
+		
+		counter[bi]++;
+	}
+
+	vector<int> got;
+	priority_queue<int, vector<int>, greater<int>> pq;
+
+	for(int i=1; i<=n; i++){
+		if (counter[i] == 0){
+			pq.push(i);
+		}
+	}
+
+	while(!pq.empty()){
+		int least = pq.top();
+		pq.pop();
+
+		got.push_back(least);
+
+		vector<int>& nexts = edges[least];
+		for(auto it: nexts){
+			int nextv = it;
+			
+			counter[nextv]--;
+			
+			if(counter[nextv] == 0){
+				pq.push(nextv);
+			}
+		}
+	}
+
+	if (got.size() != n){
+		cout << -1 << endl;
+		return 0;
+	}
+
+	for(int i=0; i<got.size(); i++){
+		cout << got[i] << " ";
+	}
 
     return 0;
 }
