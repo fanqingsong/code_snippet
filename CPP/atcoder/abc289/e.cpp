@@ -172,18 +172,77 @@ https://atcoder.jp/contests/abcxxx/tasks/abcxxx_d
 */
 
 int t;
-vector<int> c;
 int n, m;
-map<int, map<int, bool> > mp;
 
-struct NODE {
+vector<int> c;
+map<int, set<int> > edges;
+
+typedef struct {
 	int tpos;
 	int apos;
 	int steps;
-};
+} NODE;
 
 int bfs(){
+	map<int, map<int, bool> > inque;
+	queue<NODE> qq;
+
+	NODE node;
 	
+	node.tpos = 1;
+	node.apos = n;
+	node.steps = 0;
+	
+	qq.push(node);
+
+	inque[1][0] = true;
+
+	while(!qq.empty()){
+		NODE front = qq.front();
+		qq.pop();
+		
+		int tpos = front.tpos;
+		int apos = front.apos;
+		int steps = front.steps;
+		
+//		cout << "------ tpos = " << tpos << endl;
+//		cout << "------ apos = " << apos << endl;
+//		cout << "------ steps = " << steps << endl;
+
+		if (tpos == n && apos == 1){
+//			cout << steps << endl;
+			return steps;
+		}
+
+		// do combination and add to queue
+		for(auto tit: edges[tpos]){
+			for(auto ait: edges[apos]){
+				// skip if next pos colors are same
+				if(c[tit] == c[ait]){
+					continue;
+				}
+
+				if (inque[tit][ait]){
+					continue;
+				}
+
+//				cout << "add one pair to queue" << endl;
+//				cout << "tit = " << tit << endl;
+//				cout << "ait = " << ait << endl;
+
+				NODE node;
+				node.tpos = tit;
+				node.apos = ait;
+				node.steps = steps + 1;
+				
+				qq.push(node);
+				
+				inque[tit][ait] = true;
+			}
+		}
+	}
+	
+	return -1;
 }
 
 int main()
@@ -191,21 +250,22 @@ int main()
 	cin >> t;
 	REP(i, t){
 		cin >> n >> m;
-		
+
 		c.clear();
+		c.push_back(0);
 		REP(j, n){
 			int cj;
 			cin >> cj;
 			c.push_back(cj);
 		}
 		
-		mp.clear();
+		edges.clear();
 		REP(j, m){
 			int uj, vj;
 			cin >> uj >> vj;
 			
-			mp[uj][vj] = true;
-			mp[vj][uj] = true;
+			edges[uj].insert(vj);
+			edges[vj].insert(uj);
 		}
 		
 		cout << bfs() << endl;
