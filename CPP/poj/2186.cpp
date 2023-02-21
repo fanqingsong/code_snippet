@@ -283,6 +283,11 @@ int main()
 			int v = vit.first;
 			int vc = color[v];
 			
+			// i.e. u v in the same ssc
+			if (uc == vc){
+				continue;
+			}
+			
 			outdegree[uc]++;
 			indegree[vc]++;
 		}
