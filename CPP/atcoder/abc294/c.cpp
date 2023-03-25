@@ -171,107 +171,67 @@ void Graph::DFS(int v)
 https://atcoder.jp/contests/abcxxx/tasks/abcxxx_d
 */
 
-
-int n, m;
-map<int, vector<int> > e;
-int vis[200005];
-int dg[200005];
-int ncc, cc; // non cycle count and cycle count
-
-/*
-one rope model:
-one end color -- rope number -- another end color
-short form:
-c -- r -- c
-
-there are one critical condition:
-for each rope, a end with same color cannot be tied multiple times.
-so to speak, one end can only tie one time.
-
-the condition make sure that there are only three shapes to be made:
-(1) isolated rope, not tied to any other ropes
-c -- r -- c
-
-(2) line model, without cycle
-c -- r -- c c -- r -- c c -- r -- c
-
-(3) cycle model
-c -- r -- c
-c           c
-\           \
-\           \
-r           r
-\           \
-\           \
-c           c
-c -- r -- c
-*/
-
-void dfs(int i){
-	vis[i] = true;
-	
-	for(auto next: e[i]){
-		if (vis[next] == false){
-			dfs(next);
-		}
-	}
-}
-
 int main()
 {
+	int n, m;
+
 	cin >> n >> m;
 
-	for(int i=0; i<m; i++){
-		int ai, bi;
-		string aci, bci;
-		cin >> ai >> aci >> bi >> bci;
-		
-		e[ai].push_back(bi);
-		dg[ai]++;
-		dg[bi]++;
-		
-		e[bi].push_back(ai);
-		dg[ai]++;
-		dg[bi]++;
-	}
+	vector<int> a(n+1);
+	vector<int> b(m+1);
+
+	vector<int> ao(n+1);
+	vector<int> bo(m+1);
 
 	for(int i=1; i<=n; i++){
-		if (vis[i] == true){
-			continue;
-		}
+		cin >> a[i];
+	}
+
+	for(int i=1; i<=m; i++){
+		cin >> b[i];
+	}
+
+	int i,j;
+	i = 1;
+	j = 1;
+
+	int order = 0;
+	while(i<=n && j<=m){
+		int av = a[i];
+		int bv = b[j];
 		
-		/*
-		for (1) isolated rope
-		this rope untie to any other ropes
-		*/
-		if (dg[i] == 0){
-			vis[i] = true;
-			ncc++;
-		/*
-		for (2) line model, the rope is start end
-		*/
-		} else if (dg[i] == 2){
-			dfs(i);
-			ncc++;
+		order++;
+		if (av <= bv){
+			ao[i] = order;
+			i++;
+		} else if (av > bv){
+			bo[j] = order;
+			j++;
 		}
+	}
+
+	while (i<=n){
+		order++;
+		ao[i] = order;
+		i++;
+	}
+
+	while (j<=m){
+		order++;
+		bo[j] = order;
+		j++;
 	}
 
 
 	for(int i=1; i<=n; i++){
-		if (vis[i] == true){
-			continue;
-		}
-
-		/*
-		for (3) line model, the rope is start end
-		*/
-		if (dg[i] == 4){
-			dfs(i);
-			cc++;
-		}
+		cout << ao[i] << " ";
 	}
+	cout << endl;
 
-	cout << cc << " " << ncc << endl;
+	for(int i=1; i<=m; i++){
+		cout << bo[i] << " ";
+	}
+	cout << endl;
 
     return 0;
 }

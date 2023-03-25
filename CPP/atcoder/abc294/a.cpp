@@ -171,107 +171,20 @@ void Graph::DFS(int v)
 https://atcoder.jp/contests/abcxxx/tasks/abcxxx_d
 */
 
-
-int n, m;
-map<int, vector<int> > e;
-int vis[200005];
-int dg[200005];
-int ncc, cc; // non cycle count and cycle count
-
-/*
-one rope model:
-one end color -- rope number -- another end color
-short form:
-c -- r -- c
-
-there are one critical condition:
-for each rope, a end with same color cannot be tied multiple times.
-so to speak, one end can only tie one time.
-
-the condition make sure that there are only three shapes to be made:
-(1) isolated rope, not tied to any other ropes
-c -- r -- c
-
-(2) line model, without cycle
-c -- r -- c c -- r -- c c -- r -- c
-
-(3) cycle model
-c -- r -- c
-c           c
-\           \
-\           \
-r           r
-\           \
-\           \
-c           c
-c -- r -- c
-*/
-
-void dfs(int i){
-	vis[i] = true;
-	
-	for(auto next: e[i]){
-		if (vis[next] == false){
-			dfs(next);
-		}
-	}
-}
-
 int main()
 {
-	cin >> n >> m;
-
-	for(int i=0; i<m; i++){
-		int ai, bi;
-		string aci, bci;
-		cin >> ai >> aci >> bi >> bci;
+	int n;
+	
+	cin >> n;
+	
+	for(int i=0; i<n; i++){
+		int temp;
+		cin >> temp;
 		
-		e[ai].push_back(bi);
-		dg[ai]++;
-		dg[bi]++;
-		
-		e[bi].push_back(ai);
-		dg[ai]++;
-		dg[bi]++;
-	}
-
-	for(int i=1; i<=n; i++){
-		if (vis[i] == true){
-			continue;
-		}
-		
-		/*
-		for (1) isolated rope
-		this rope untie to any other ropes
-		*/
-		if (dg[i] == 0){
-			vis[i] = true;
-			ncc++;
-		/*
-		for (2) line model, the rope is start end
-		*/
-		} else if (dg[i] == 2){
-			dfs(i);
-			ncc++;
+		if (temp % 2 == 0){
+			cout << temp << " ";
 		}
 	}
-
-
-	for(int i=1; i<=n; i++){
-		if (vis[i] == true){
-			continue;
-		}
-
-		/*
-		for (3) line model, the rope is start end
-		*/
-		if (dg[i] == 4){
-			dfs(i);
-			cc++;
-		}
-	}
-
-	cout << cc << " " << ncc << endl;
 
     return 0;
 }

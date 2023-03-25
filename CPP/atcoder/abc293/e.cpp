@@ -172,109 +172,48 @@ https://atcoder.jp/contests/abcxxx/tasks/abcxxx_d
 */
 
 
-int n, m;
-map<int, vector<int> > e;
-int vis[200005];
-int dg[200005];
-int ncc, cc; // non cycle count and cycle count
+#define ll long long
 
-/*
-one rope model:
-one end color -- rope number -- another end color
-short form:
-c -- r -- c
+ll a, x, m;
 
-there are one critical condition:
-for each rope, a end with same color cannot be tied multiple times.
-so to speak, one end can only tie one time.
+struct M{
+    ll m[2][2];
+};
 
-the condition make sure that there are only three shapes to be made:
-(1) isolated rope, not tied to any other ropes
-c -- r -- c
+M operator*(M a,M b){
+    M ans={{0}};
 
-(2) line model, without cycle
-c -- r -- c c -- r -- c c -- r -- c
+    for(int i=0;i<2;i++){
+        for(int j=0;j<2;j++){
+            for(int k=0;k<2;k++){
+                ans.m[i][j]+=a.m[i][k]*b.m[k][j];
+                ans.m[i][j]%=mod;
+            }
+        }
+    }
+    return ans;
+}
+M ksm(M a,ll b){
+    M ans{.m={{1,0},{0,1}}};
+    while (b>0){
+        if(b&1)ans=ans*a;
+        a=a*a;
+        b>>=1;
+    }
+    return ans;
+}
 
-(3) cycle model
-c -- r -- c
-c           c
-\           \
-\           \
-r           r
-\           \
-\           \
-c           c
-c -- r -- c
-*/
-
-void dfs(int i){
-	vis[i] = true;
+int main(){
 	
-	for(auto next: e[i]){
-		if (vis[next] == false){
-			dfs(next);
-		}
-	}
+    ll a;
+    cin>>a;
+//    M s,tmp;
+    M tmp{.m={{3,1},{1,3}}};
+    M s{.m={{1,0},{0,0}}};
+//    M ans=tmp*s;
+    M ans=ksm(tmp,a)*s;
+    cout<<ans.m[0][0]<<endl;
+//    cout<<ans.m[0][0]<<" "<<ans.m[0][1]<<endl<<ans.m[1][0]<<" "<<ans.m[1][1]<<endl;;
 }
-
-int main()
-{
-	cin >> n >> m;
-
-	for(int i=0; i<m; i++){
-		int ai, bi;
-		string aci, bci;
-		cin >> ai >> aci >> bi >> bci;
-		
-		e[ai].push_back(bi);
-		dg[ai]++;
-		dg[bi]++;
-		
-		e[bi].push_back(ai);
-		dg[ai]++;
-		dg[bi]++;
-	}
-
-	for(int i=1; i<=n; i++){
-		if (vis[i] == true){
-			continue;
-		}
-		
-		/*
-		for (1) isolated rope
-		this rope untie to any other ropes
-		*/
-		if (dg[i] == 0){
-			vis[i] = true;
-			ncc++;
-		/*
-		for (2) line model, the rope is start end
-		*/
-		} else if (dg[i] == 2){
-			dfs(i);
-			ncc++;
-		}
-	}
-
-
-	for(int i=1; i<=n; i++){
-		if (vis[i] == true){
-			continue;
-		}
-
-		/*
-		for (3) line model, the rope is start end
-		*/
-		if (dg[i] == 4){
-			dfs(i);
-			cc++;
-		}
-	}
-
-	cout << cc << " " << ncc << endl;
-
-    return 0;
-}
-
 
 
