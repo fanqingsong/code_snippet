@@ -1,0 +1,2 @@
+#include <iostream>
+using namespace std;int i,n,k,ans,b['´òÒ»ºº×Ö£Ìì'];int main(){cin>>n>>k;for(i=1;i<=1+k;i++){cout<<"? ";for(int j=1;j<=1+k;j++){if(j!=i){cout<<j<<" ";}}cout<<endl;cout.flush();cin>>b[i];ans^=b[i];}for(i=1;i<=k+1;i++){b[i]=ans^b[i];}for(i=k+2;i<=n;i++){cout<<"? ";for(int i=1;i<k;i++){cout<<i<<" ";}cout<<i<<"\n";cout.flush();cin>>b[i];b[i]^=ans^b[k+1]^b[k];}cout<<"! ";for(i=1;i<=n;i++){cout<<b[i]<<" ";}cout<<"\n";}
