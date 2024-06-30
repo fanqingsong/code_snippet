@@ -195,78 +195,27 @@ void Graph::DFS(int v)
 https://atcoder.jp/contests/abcxxx/tasks/abcxxx_d
 */
 
-struct NODE{
-	int fa;
-	int ch[2];
-	int val;
-	int cnt;
-	int sz;
-} tr[50000];
-
-int rt = 0;
-int tot = 0;
-
-void maintain(int x){
-	tr[x].sz = tr[tr[x].ch[0]].sz + tr[tr[x].ch[0]].sz + tr[x].cnt;
-}
-
-bool get(int x){
-	return x == tr[tr[x].fa].ch;
-}
-
-void clear(int x){
-	tr[x].ch[0] = tr[x].ch[1] = tr[x].fa = tr[x].sz = tr[x].cnt = 0;
-}
-
-void rotate(int x) {
-	int y = tr[x].fa;
-	int z = tr[y].fa;
-	int chk = get(x);
-	
-	tr[y].ch[chk] = tr[x].ch[chk ^ 1];
-	
-	if (tr[x].ch[chk^1]){
-		tr[x].fa[tr[x].ch[chk^1]] = y;
-	}
-	
-	tr[x].ch[chk^1] = y;
-	
-	tr[y].fa = x;
-	tr[x].fa = z;
-	
-	if (z){
-		tr[z].ch[y==tr[z].ch[1]] = x;
-	}
-	
-	maintain(y);
-	maintain(x);
-}
-
-void splay(int x){
-	for(int f=tr[x].fa; f=tr[x].fa, f; rotate(x)){
-		if (tr[f].fa) rotate(get(x) == get(f)? f: x);
-	}
-	
-	rt = x;
-}
-void ins(int k){
-	if(!rt){
-		tr[++tot]={,{,},,};
-	}
-	int cur=rt,f=0;
-	while(1){
-		if(tr[cur].val==k){
-			
-		}
-		f=cur;
-		cur=tr[cur].ch[k>tr[cur].val];
-		if(!cur){
-			
-		}
-	}
-}
 int main()
 {
+	string s;
+
+	cin >> s;
+
+	int ri, mi;
+
+	for(int i=0; i<s.size(); i++){
+		if (s[i] == 'R'){
+			ri = i;
+		} else if (s[i] == 'M'){
+			mi = i;
+		}
+	}
+
+	if (ri < mi){
+		cout << "Yes" << endl;
+	} else {
+		cout << "No" << endl;
+	}
 
     return 0;
 }

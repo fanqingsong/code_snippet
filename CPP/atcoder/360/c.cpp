@@ -195,78 +195,42 @@ void Graph::DFS(int v)
 https://atcoder.jp/contests/abcxxx/tasks/abcxxx_d
 */
 
-struct NODE{
-	int fa;
-	int ch[2];
-	int val;
-	int cnt;
-	int sz;
-} tr[50000];
+typedef long long ll;
 
-int rt = 0;
-int tot = 0;
+ll n;
+ll a[100005];
+ll w[100005];
+map<ll, vector<ll>> buckets;
 
-void maintain(int x){
-	tr[x].sz = tr[tr[x].ch[0]].sz + tr[tr[x].ch[0]].sz + tr[x].cnt;
-}
 
-bool get(int x){
-	return x == tr[tr[x].fa].ch;
-}
-
-void clear(int x){
-	tr[x].ch[0] = tr[x].ch[1] = tr[x].fa = tr[x].sz = tr[x].cnt = 0;
-}
-
-void rotate(int x) {
-	int y = tr[x].fa;
-	int z = tr[y].fa;
-	int chk = get(x);
-	
-	tr[y].ch[chk] = tr[x].ch[chk ^ 1];
-	
-	if (tr[x].ch[chk^1]){
-		tr[x].fa[tr[x].ch[chk^1]] = y;
-	}
-	
-	tr[x].ch[chk^1] = y;
-	
-	tr[y].fa = x;
-	tr[x].fa = z;
-	
-	if (z){
-		tr[z].ch[y==tr[z].ch[1]] = x;
-	}
-	
-	maintain(y);
-	maintain(x);
-}
-
-void splay(int x){
-	for(int f=tr[x].fa; f=tr[x].fa, f; rotate(x)){
-		if (tr[f].fa) rotate(get(x) == get(f)? f: x);
-	}
-	
-	rt = x;
-}
-void ins(int k){
-	if(!rt){
-		tr[++tot]={,{,},,};
-	}
-	int cur=rt,f=0;
-	while(1){
-		if(tr[cur].val==k){
-			
-		}
-		f=cur;
-		cur=tr[cur].ch[k>tr[cur].val];
-		if(!cur){
-			
-		}
-	}
-}
 int main()
 {
+	cin >> n;
+	
+	for(int i=0; i<n; i++){
+		cin >> a[i];
+	}
+
+	for(int i=0; i<n; i++){
+		cin >> w[i];
+	}
+
+	for(int i=0; i<n; i++){
+		int bucket_number = a[i];
+		buckets[bucket_number].push_back(w[i]);
+	}
+
+	ll sum = 0;
+	for(auto& one: buckets){
+		vector<ll>& weights = one.second;
+		sort(weights.begin(), weights.end());
+		
+		for(int i=0; i<weights.size()-1; i++){
+			sum += weights[i];
+		}
+	}
+
+	cout << sum << endl;
 
     return 0;
 }
